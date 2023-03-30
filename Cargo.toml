@@ -1,5 +1,5 @@
 [package]
-name = "color-doom"
+name = "color-wheel-renderer"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,8 @@ edition = "2021"
 
 [dependencies]
 float-cmp = "0.9.0"
+libm = "0.2.6"
+
+[dev-dependencies]
+# faux = "^0.1"
+mockall = "0.11.3"

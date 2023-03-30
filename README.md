@@ -1,1 +1,1 @@
-# color-doom
+# color-wheel-renderer
