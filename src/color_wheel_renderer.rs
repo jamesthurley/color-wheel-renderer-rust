@@ -7,8 +7,10 @@ use crate::{
     render_pixel::{RenderPixel, RenderPixelData},
 };
 
-pub trait ColorWheelRenderer<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter> {
-    fn render(
+// We're putting the `PixelWriter` as a generic parameter on the `ColorWheelRenderer` trait
+// so that we can more easily mock it in `ColorWheelSetRenderer`.
+pub trait ColorWheelRenderer<TPixelWriter: PixelWriter> {
+    fn render<TPixelGenerator: PixelGenerator>(
         &self,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
@@ -22,10 +24,10 @@ where
     render_pixel: TRenderPixel,
 }
 
-impl<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter, TRenderPixel: RenderPixel>
-    ColorWheelRenderer<TPixelGenerator, TPixelWriter> for DefaultColorWheelRenderer<TRenderPixel>
+impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> ColorWheelRenderer<TPixelWriter>
+    for DefaultColorWheelRenderer<TRenderPixel>
 {
-    fn render(
+    fn render<TPixelGenerator: PixelGenerator>(
         &self,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,

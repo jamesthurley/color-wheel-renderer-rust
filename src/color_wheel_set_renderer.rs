@@ -5,32 +5,36 @@ use crate::{
     pixel_writer::{OffsetPixelWriter, PixelWriterFactory},
 };
 
-pub trait ColorWheelSetRenderer<TPixelGenerator: PixelGenerator> {
-    fn render(&self, color_wheels: &[ColorWheelDefinition<TPixelGenerator>], spacing: usize);
+pub trait ColorWheelSetRenderer {
+    fn render<TPixelGenerator: PixelGenerator>(
+        &self,
+        color_wheels: &[ColorWheelDefinition<TPixelGenerator>],
+        spacing: usize,
+    );
 }
 
-pub struct DefaultColorWheelSetRenderer<TColorWheelRenderer, TPixelWriterFactory, TPixelGenerator>
+pub struct DefaultColorWheelSetRenderer<TColorWheelRenderer, TPixelWriterFactory>
 where
     for<'pw> TColorWheelRenderer:
-        ColorWheelRenderer<TPixelGenerator, OffsetPixelWriter<'pw, TPixelWriterFactory::Result>>,
+        ColorWheelRenderer<OffsetPixelWriter<'pw, TPixelWriterFactory::Result>>,
     TPixelWriterFactory: PixelWriterFactory,
-    TPixelGenerator: PixelGenerator,
 {
     color_wheel_renderer: TColorWheelRenderer,
     pixel_writer_factory: TPixelWriterFactory,
-    _phantom: std::marker::PhantomData<TPixelGenerator>,
 }
 
-impl<TColorWheelRenderer, TPixelWriterFactory, TPixelGenerator>
-    ColorWheelSetRenderer<TPixelGenerator>
-    for DefaultColorWheelSetRenderer<TColorWheelRenderer, TPixelWriterFactory, TPixelGenerator>
+impl<TColorWheelRenderer, TPixelWriterFactory> ColorWheelSetRenderer
+    for DefaultColorWheelSetRenderer<TColorWheelRenderer, TPixelWriterFactory>
 where
     for<'pw> TColorWheelRenderer:
-        ColorWheelRenderer<TPixelGenerator, OffsetPixelWriter<'pw, TPixelWriterFactory::Result>>,
+        ColorWheelRenderer<OffsetPixelWriter<'pw, TPixelWriterFactory::Result>>,
     TPixelWriterFactory: PixelWriterFactory,
-    TPixelGenerator: PixelGenerator,
 {
-    fn render(&self, color_wheels: &[ColorWheelDefinition<TPixelGenerator>], spacing: usize) {
+    fn render<TPixelGenerator: PixelGenerator>(
+        &self,
+        color_wheels: &[ColorWheelDefinition<TPixelGenerator>],
+        spacing: usize,
+    ) {
         if color_wheels.is_empty() {
             panic!("No color wheels to render.");
         }
@@ -79,7 +83,6 @@ mod tests {
         let color_wheel_set_renderer = DefaultColorWheelSetRenderer {
             color_wheel_renderer: Rc::clone(&color_wheel_renderer),
             pixel_writer_factory: Rc::clone(&pixel_writer_factory),
-            _phantom: Default::default(),
         };
 
         let color_wheels = vec![
@@ -144,15 +147,13 @@ mod tests {
     struct MockColorWheelRenderer {
         pub calls: RefCell<Vec<ColorWheelRendererCall>>,
     }
-
-    impl<'pw, TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>
-        ColorWheelRenderer<TPixelGenerator, OffsetPixelWriter<'pw, TPixelWriter>>
+    impl<'pw, TPixelWriter: PixelWriter> ColorWheelRenderer<OffsetPixelWriter<'pw, TPixelWriter>>
         for Rc<MockColorWheelRenderer>
     {
-        fn render(
+        fn render<TPixelGenerator: PixelGenerator>(
             &self,
             definition: &ColorWheelDefinition<TPixelGenerator>,
-            pixel_writer: &mut OffsetPixelWriter<TPixelWriter>,
+            pixel_writer: &mut OffsetPixelWriter<'pw, TPixelWriter>,
         ) {
             self.calls.borrow_mut().push(ColorWheelRendererCall {
                 wheel_size: definition.size,
