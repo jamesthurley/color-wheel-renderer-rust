@@ -50,8 +50,6 @@ impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariab
 
 #[cfg(test)]
 mod tests {
-    use std::rc::Rc;
-
     use float_cmp::assert_approx_eq;
 
     use crate::{bucket::BucketDirection, common::Pixel};
@@ -61,7 +59,7 @@ mod tests {
     struct Setup {
         pub target: DefaultGetPixelGeneratorAndVariableDimension,
         pub generator_size: f64,
-        pub definition: ColorWheelDefinition<Rc<MockPixelGenerator>>,
+        pub definition: ColorWheelDefinition<MockPixelGenerator>,
     }
 
     fn setup() -> Setup {
@@ -74,9 +72,9 @@ mod tests {
                 angle_buckets: 10,
                 distance_buckets: 10,
                 pixel_generators: vec![
-                    Rc::new(MockPixelGenerator { id: 1 }),
-                    Rc::new(MockPixelGenerator { id: 2 }),
-                    Rc::new(MockPixelGenerator { id: 3 }),
+                    MockPixelGenerator { id: 1 },
+                    MockPixelGenerator { id: 2 },
+                    MockPixelGenerator { id: 3 },
                 ],
             },
         }
@@ -135,7 +133,7 @@ mod tests {
     struct MockPixelGenerator {
         id: usize,
     }
-    impl PixelGenerator for Rc<MockPixelGenerator> {
+    impl PixelGenerator for MockPixelGenerator {
         fn is_angle_inverted(&self) -> bool {
             unimplemented!()
         }
