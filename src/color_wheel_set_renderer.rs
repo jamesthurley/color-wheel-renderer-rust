@@ -41,8 +41,8 @@ where
 
         // Color wheels are laid out horizontally, so we take the max size for the height
         // and the sum of the sizes with padding added for the width.
-        let overall_height = color_wheels.iter().map(|v| v.size).max().unwrap();
-        let overall_width = color_wheels.iter().map(|v| v.size).sum::<usize>()
+        let overall_height = color_wheels.iter().map(|v| v.image_size).max().unwrap();
+        let overall_width = color_wheels.iter().map(|v| v.image_size).sum::<usize>()
             + (spacing * (color_wheels.len() - 1));
 
         let mut pixel_writer = self
@@ -59,7 +59,7 @@ where
 
             self.color_wheel_renderer
                 .render(color_wheel, &mut offset_pixel_writer);
-            offset_x += color_wheel.size + spacing;
+            offset_x += color_wheel.image_size + spacing;
         }
     }
 }
@@ -87,14 +87,14 @@ mod tests {
 
         let color_wheels = vec![
             ColorWheelDefinition {
-                size: 100,
+                image_size: 100,
                 margin_size: 10,
                 angle_buckets: 36,
                 distance_buckets: 5,
                 pixel_generators: vec![MockPixelGenerator::new()],
             },
             ColorWheelDefinition {
-                size: 200,
+                image_size: 200,
                 margin_size: 20,
                 angle_buckets: 36,
                 distance_buckets: 5,
@@ -156,7 +156,7 @@ mod tests {
             pixel_writer: &mut OffsetPixelWriter<'pw, TPixelWriter>,
         ) {
             self.calls.borrow_mut().push(ColorWheelRendererCall {
-                wheel_size: definition.size,
+                wheel_size: definition.image_size,
                 offset_x: pixel_writer.offset_x,
                 offset_y: pixel_writer.offset_y,
             });

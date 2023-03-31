@@ -36,8 +36,8 @@ impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> ColorWheelRenderer<TP
             return;
         }
 
-        let image_width = definition.size;
-        let image_height = definition.size;
+        let image_width = definition.image_size;
+        let image_height = definition.image_size;
 
         let wheel_diameter = min(image_width, image_height) - (definition.margin_size * 2);
 
@@ -46,8 +46,8 @@ impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> ColorWheelRenderer<TP
 
         let edge_distance = wheel_diameter as f64 / 2.;
 
-        let renderer_size = edge_distance / definition.pixel_generators.len() as f64;
-        if renderer_size < 1. {
+        let generator_size = edge_distance / definition.pixel_generators.len() as f64;
+        if generator_size < 1. {
             panic!("Image is too small.");
         }
 
@@ -55,7 +55,7 @@ impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> ColorWheelRenderer<TP
             center_x,
             center_y,
             edge_distance,
-            renderer_size,
+            generator_size,
         };
 
         for image_x in 0..image_width {

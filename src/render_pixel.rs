@@ -9,7 +9,7 @@ pub struct RenderPixelData {
     pub center_x: usize,
     pub center_y: usize,
     pub edge_distance: f64,
-    pub renderer_size: f64,
+    pub generator_size: f64,
 }
 
 pub trait RenderPixel {
@@ -27,7 +27,7 @@ struct DefaultRenderPixel<TGetPixelGeneratorAndVariableDimension>
 where
     TGetPixelGeneratorAndVariableDimension: GetPixelGeneratorAndVariableDimension,
 {
-    get_pixel_renderer_and_variable_dimension: TGetPixelGeneratorAndVariableDimension,
+    get_pixel_generator_and_variable_dimension: TGetPixelGeneratorAndVariableDimension,
 }
 
 impl<TGetPixelGeneratorAndVariableDimension> RenderPixel
@@ -49,8 +49,8 @@ where
         if distance_from_center > data.edge_distance {
             return;
         }
-        let pixel_generator_result = self.get_pixel_renderer_and_variable_dimension.execute(
-            data.renderer_size,
+        let pixel_generator_result = self.get_pixel_generator_and_variable_dimension.execute(
+            data.generator_size,
             definition,
             distance_from_center,
         );
