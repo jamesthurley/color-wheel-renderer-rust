@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum BucketDirection {
     Down,
     Up,

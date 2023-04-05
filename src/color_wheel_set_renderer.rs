@@ -1,8 +1,7 @@
 use crate::{
-    color_wheel_definition::ColorWheelDefinition,
-    color_wheel_renderer::ColorWheelRenderer,
-    pixel_generators::pixel_generator::PixelGenerator,
-    pixel_writer::{OffsetPixelWriter, PixelWriterFactory},
+    color_wheel_definition::ColorWheelDefinition, color_wheel_renderer::ColorWheelRenderer,
+    offset_pixel_writer::OffsetPixelWriter, pixel_generators::pixel_generator::PixelGenerator,
+    pixel_writer::PixelWriterFactory,
 };
 
 pub trait ColorWheelSetRenderer {
