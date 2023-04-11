@@ -9,25 +9,25 @@ use crate::{
 
 // We're putting the `PixelWriter` as a generic parameter on the `ColorWheelRenderer` trait
 // so that we can more easily mock it in `ColorWheelSetRenderer`.
-pub trait ColorWheelRenderer<TPixelWriter: PixelWriter> {
-    fn render<TPixelGenerator: PixelGenerator>(
+pub trait RenderColorWheel<TPixelWriter: PixelWriter> {
+    fn execute<TPixelGenerator: PixelGenerator>(
         &self,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
     );
 }
 
-pub struct DefaultColorWheelRenderer<TRenderPixel>
+pub struct DefaultRenderColorWheel<TRenderPixel>
 where
     TRenderPixel: RenderPixel,
 {
     render_pixel: TRenderPixel,
 }
 
-impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> ColorWheelRenderer<TPixelWriter>
-    for DefaultColorWheelRenderer<TRenderPixel>
+impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> RenderColorWheel<TPixelWriter>
+    for DefaultRenderColorWheel<TRenderPixel>
 {
-    fn render<TPixelGenerator: PixelGenerator>(
+    fn execute<TPixelGenerator: PixelGenerator>(
         &self,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
@@ -95,11 +95,11 @@ mod tests {
             pixel_generators: vec![],
         };
 
-        let renderer = DefaultColorWheelRenderer {
+        let renderer = DefaultRenderColorWheel {
             render_pixel: render_pixel.clone(),
         };
 
-        renderer.render(&definition, &mut pixel_writer);
+        renderer.execute(&definition, &mut pixel_writer);
 
         let calls = render_pixel.calls.borrow();
         assert_eq!(calls.len(), 0);
@@ -121,11 +121,11 @@ mod tests {
             pixel_generators: vec![MockPixelGenerator::new(), MockPixelGenerator::new()],
         };
 
-        let renderer = DefaultColorWheelRenderer {
+        let renderer = DefaultRenderColorWheel {
             render_pixel: render_pixel.clone(),
         };
 
-        renderer.render(&definition, &mut pixel_writer);
+        renderer.execute(&definition, &mut pixel_writer);
 
         let calls = render_pixel.calls.borrow();
         assert_eq!(calls.len(), 225);

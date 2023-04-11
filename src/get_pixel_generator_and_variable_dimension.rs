@@ -52,7 +52,9 @@ impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariab
 mod tests {
     use float_cmp::assert_approx_eq;
 
-    use crate::{bucket::BucketDirection, common::Pixel};
+    use crate::{
+        common::Pixel, pixel_generators::pixel_generator_configuration::PixelGeneratorConfiguration,
+    };
 
     use super::*;
 
@@ -134,23 +136,11 @@ mod tests {
         id: usize,
     }
     impl PixelGenerator for MockPixelGenerator {
-        fn is_angle_inverted(&self) -> bool {
+        fn configuration(&self) -> PixelGeneratorConfiguration {
             unimplemented!()
         }
 
-        fn is_varying_dimension_inverted(&self) -> bool {
-            unimplemented!()
-        }
-
-        fn angle_bucket_direction(&self) -> BucketDirection {
-            unimplemented!()
-        }
-
-        fn varying_dimension_bucket_direction(&self) -> BucketDirection {
-            unimplemented!()
-        }
-
-        fn get_pixel(&self, _angle_degrees: f64, _varying_dimension_value: f64) -> Option<Pixel> {
+        fn get_pixel(&self, _angle_degrees: f64, _varying_dimension_value: f64) -> Pixel {
             unimplemented!()
         }
     }

@@ -1,1 +1,10 @@
+pub mod hsl_fixed_lightness_pixel_generator;
+pub mod hsl_fixed_saturation_pixel_generator;
+pub mod hsl_to_pixel;
+pub mod hsv_fixed_saturation_pixel_generator;
+pub mod hsv_fixed_value_pixel_generator;
+pub mod hsv_to_pixel;
+pub mod intermediate_cxm_to_pixel;
 pub mod pixel_generator;
+pub mod pixel_generator_configuration;
+pub mod test_utilities;

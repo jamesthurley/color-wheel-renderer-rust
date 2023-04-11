@@ -79,9 +79,7 @@ where
             definition.distance_buckets,
         );
 
-        if let Some(pixel) = pixel {
-            pixel_writer.write_pixel(image_x, image_y, pixel);
-        }
+        pixel_writer.write_pixel(image_x, image_y, pixel);
     }
 }
 
@@ -111,7 +109,7 @@ mod tests {
         pub color_wheel_definition: ColorWheelDefinition<MockPixelGenerator>,
     }
 
-    fn setup(generator_index: isize, variable_dimension: f64, pixel: Option<Pixel>) -> SetupData {
+    fn setup(generator_index: isize, variable_dimension: f64, pixel: Pixel) -> SetupData {
         let pixel_writer = MockPixelWriter::new();
 
         let get_pixel_generator_and_variable_dimension =
@@ -160,7 +158,7 @@ mod tests {
 
     #[test]
     fn when_outside_of_wheel_it_should_return() {
-        let mut test = setup(-1, 0., None);
+        let mut test = setup(-1, 0., Default::default());
 
         test.target.execute(
             1,
@@ -183,7 +181,7 @@ mod tests {
 
     #[test]
     fn when_no_pixel_generator_returned_it_should_return() {
-        let mut test = setup(-1, 0., None);
+        let mut test = setup(-1, 0., Default::default());
 
         test.target.execute(
             56,
@@ -213,8 +211,15 @@ mod tests {
     }
 
     #[test]
-    fn when_pixel_generator_returns_no_pixel_it_should_not_write_pixel() {
-        let mut test = setup(0, 123., None);
+    fn when_pixel_generator_returns_pixel_it_should_write_pixel() {
+        let pixel = Pixel::new(1, 2, 3);
+        let mut test = setup(0, 123., pixel);
+
+        test.pixel_writer
+            .expect_write_pixel()
+            .with(eq(56), eq(54), eq(pixel))
+            .once()
+            .return_const(());
 
         test.target.execute(
             56,
@@ -236,26 +241,6 @@ mod tests {
         assert_eq!(
             call.distance_buckets,
             test.color_wheel_definition.distance_buckets
-        );
-    }
-
-    #[test]
-    fn when_pixel_generator_returns_pixel_it_should_write_pixel() {
-        let pixel = Pixel::new(1, 2, 3);
-        let mut test = setup(0, 123., Some(pixel));
-
-        test.pixel_writer
-            .expect_write_pixel()
-            .with(eq(56), eq(54), eq(pixel))
-            .once()
-            .return_const(());
-
-        test.target.execute(
-            56,
-            54,
-            &test.render_pixel_data,
-            &test.color_wheel_definition,
-            &mut test.pixel_writer,
         );
     }
 
@@ -302,7 +287,7 @@ mod tests {
         distance_buckets: usize,
     }
     struct MockGetPixel {
-        result: Option<Pixel>,
+        result: Pixel,
         calls: RefCell<Vec<MockGetPixelCall>>,
     }
     impl GetPixel for Rc<MockGetPixel> {
@@ -313,7 +298,7 @@ mod tests {
             variable_dimension: f64,
             angle_buckets: usize,
             distance_buckets: usize,
-        ) -> Option<Pixel> {
+        ) -> Pixel {
             self.calls.borrow_mut().push(MockGetPixelCall {
                 angle_degrees,
                 variable_dimension,

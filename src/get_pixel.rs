@@ -8,7 +8,7 @@ pub trait GetPixel {
         variable_dimension: f64,
         angle_buckets: usize,
         distance_buckets: usize,
-    ) -> Option<Pixel>;
+    ) -> Pixel;
 }
 
 pub struct DefaultGetPixel {}
@@ -20,26 +20,28 @@ impl GetPixel for DefaultGetPixel {
         mut variable_dimension: f64,
         angle_buckets: usize,
         distance_buckets: usize,
-    ) -> Option<Pixel> {
+    ) -> Pixel {
+        let configuration = pixel_generator.configuration();
+
         angle_degrees = bucket(
             angle_degrees,
             360.,
             angle_buckets,
-            pixel_generator.angle_bucket_direction(),
+            configuration.angle_bucket_direction,
         );
 
         variable_dimension = bucket(
             variable_dimension,
             1.,
             distance_buckets,
-            pixel_generator.varying_dimension_bucket_direction(),
+            configuration.varying_dimension_bucket_direction,
         );
 
-        if pixel_generator.is_angle_inverted() {
+        if configuration.is_angle_inverted {
             angle_degrees = 360. - angle_degrees;
         }
 
-        if pixel_generator.is_varying_dimension_inverted() {
+        if configuration.is_varying_dimension_inverted {
             variable_dimension = 1. - variable_dimension;
         }
 
@@ -51,7 +53,13 @@ impl GetPixel for DefaultGetPixel {
 
 #[cfg(test)]
 mod tests {
-    use crate::{bucket::BucketDirection, pixel_generators::pixel_generator::MockPixelGenerator};
+    use crate::{
+        bucket::BucketDirection,
+        pixel_generators::{
+            pixel_generator::MockPixelGenerator,
+            pixel_generator_configuration::PixelGeneratorConfiguration,
+        },
+    };
     use mockall::predicate::*;
 
     use super::*;
@@ -66,20 +74,13 @@ mod tests {
         expected_variable_dimension: f64,
     ) -> Pixel {
         pixel_generator
-            .expect_varying_dimension_bucket_direction()
-            .return_const(varying_dimension_bucket_direction);
-
-        pixel_generator
-            .expect_angle_bucket_direction()
-            .return_const(angle_bucket_direction);
-
-        pixel_generator
-            .expect_is_varying_dimension_inverted()
-            .return_const(is_varying_dimension_inverted);
-
-        pixel_generator
-            .expect_is_angle_inverted()
-            .return_const(is_angle_inverted);
+            .expect_configuration()
+            .return_const(PixelGeneratorConfiguration {
+                varying_dimension_bucket_direction,
+                angle_bucket_direction,
+                is_varying_dimension_inverted,
+                is_angle_inverted,
+            });
 
         let expected_pixel = Pixel::new(1, 2, 3);
         pixel_generator
@@ -111,7 +112,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 0, 0);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -131,7 +132,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 4, 0);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -151,7 +152,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 4, 0);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -171,7 +172,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 0, 4);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -191,7 +192,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 0, 4);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -211,7 +212,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 0, 0);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -231,7 +232,7 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 0, 0);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 
     #[test]
@@ -251,6 +252,6 @@ mod tests {
         let get_pixel = DefaultGetPixel {};
         let pixel = get_pixel.execute(&pixel_generator, 135., 0.2, 4, 4);
 
-        assert_eq!(pixel, Some(expected_pixel));
+        assert_eq!(pixel, expected_pixel);
     }
 }
