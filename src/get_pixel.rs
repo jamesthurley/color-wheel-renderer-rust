@@ -1,4 +1,4 @@
-use crate::{bucket::bucket, common::Pixel, pixel_generators::pixel_generator::PixelGenerator};
+use crate::{bucket::bucket, common::Pixel, pixel_generators::PixelGenerator};
 
 pub trait GetPixel {
     fn execute<TPixelGenerator: PixelGenerator>(
@@ -45,8 +45,6 @@ impl GetPixel for DefaultGetPixel {
             variable_dimension = 1. - variable_dimension;
         }
 
-        println!("angle_degrees: {}", angle_degrees);
-        println!("variable_dimension: {}", variable_dimension);
         pixel_generator.get_pixel(angle_degrees, variable_dimension)
     }
 }
@@ -55,10 +53,7 @@ impl GetPixel for DefaultGetPixel {
 mod tests {
     use crate::{
         bucket::BucketDirection,
-        pixel_generators::{
-            pixel_generator::MockPixelGenerator,
-            pixel_generator_configuration::PixelGeneratorConfiguration,
-        },
+        pixel_generators::{MockPixelGenerator, PixelGeneratorConfiguration},
     };
     use mockall::predicate::*;
 

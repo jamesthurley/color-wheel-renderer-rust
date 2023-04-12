@@ -2,13 +2,13 @@ use std::cmp::min;
 
 use crate::{
     color_wheel_definition::ColorWheelDefinition,
-    pixel_generators::pixel_generator::PixelGenerator,
+    pixel_generators::PixelGenerator,
     pixel_writer::PixelWriter,
     render_pixel::{RenderPixel, RenderPixelData},
 };
 
-// We're putting the `PixelWriter` as a generic parameter on the `ColorWheelRenderer` trait
-// so that we can more easily mock it in `ColorWheelSetRenderer`.
+// We're putting the `PixelWriter` as a generic parameter on the `RenderColorWheel` trait
+// so that we can more easily mock it in `RenderColorWheelSet`.
 pub trait RenderColorWheel<TPixelWriter: PixelWriter> {
     fn execute<TPixelGenerator: PixelGenerator>(
         &self,
@@ -21,7 +21,7 @@ pub struct DefaultRenderColorWheel<TRenderPixel>
 where
     TRenderPixel: RenderPixel,
 {
-    render_pixel: TRenderPixel,
+    pub render_pixel: TRenderPixel,
 }
 
 impl<TRenderPixel: RenderPixel, TPixelWriter: PixelWriter> RenderColorWheel<TPixelWriter>
@@ -73,9 +73,7 @@ mod tests {
 
     use float_cmp::assert_approx_eq;
 
-    use crate::{
-        pixel_generators::pixel_generator::MockPixelGenerator, pixel_writer::MockPixelWriter,
-    };
+    use crate::{pixel_generators::MockPixelGenerator, pixel_writer::MockPixelWriter};
 
     use super::*;
 

@@ -5,7 +5,7 @@ use super::{
     pixel_generator_configuration::PixelGeneratorConfiguration,
 };
 
-struct HsvFixedSaturationPixelGenerator {
+pub struct HsvFixedSaturationPixelGenerator {
     pub saturation: f64,
     pub configuration: PixelGeneratorConfiguration,
 }

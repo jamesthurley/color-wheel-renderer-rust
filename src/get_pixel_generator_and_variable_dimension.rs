@@ -1,6 +1,4 @@
-use crate::{
-    color_wheel_definition::ColorWheelDefinition, pixel_generators::pixel_generator::PixelGenerator,
-};
+use crate::{color_wheel_definition::ColorWheelDefinition, pixel_generators::PixelGenerator};
 
 pub struct PixelGeneratorAndVariableDimension<'a, TPixelGenerator: PixelGenerator> {
     pub pixel_generator: &'a TPixelGenerator,
@@ -16,7 +14,7 @@ pub trait GetPixelGeneratorAndVariableDimension {
     ) -> Option<PixelGeneratorAndVariableDimension<'a, TPixelGenerator>>;
 }
 
-struct DefaultGetPixelGeneratorAndVariableDimension {}
+pub struct DefaultGetPixelGeneratorAndVariableDimension {}
 impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariableDimension {
     fn execute<'a, TPixelGenerator: PixelGenerator>(
         &self,
@@ -52,9 +50,7 @@ impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariab
 mod tests {
     use float_cmp::assert_approx_eq;
 
-    use crate::{
-        common::Pixel, pixel_generators::pixel_generator_configuration::PixelGeneratorConfiguration,
-    };
+    use crate::{common::Pixel, pixel_generators::PixelGeneratorConfiguration};
 
     use super::*;
 

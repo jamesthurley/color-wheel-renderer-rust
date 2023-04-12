@@ -5,7 +5,7 @@ use super::{
     pixel_generator_configuration::PixelGeneratorConfiguration,
 };
 
-struct HsvFixedValuePixelGenerator {
+pub struct HsvFixedValuePixelGenerator {
     pub value: f64,
     pub configuration: PixelGeneratorConfiguration,
 }

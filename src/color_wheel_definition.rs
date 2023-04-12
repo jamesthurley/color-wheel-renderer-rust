@@ -1,4 +1,4 @@
-use crate::pixel_generators::pixel_generator::PixelGenerator;
+use crate::pixel_generators::PixelGenerator;
 
 pub struct ColorWheelDefinition<TPixelGenerator>
 where

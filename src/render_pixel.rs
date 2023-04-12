@@ -2,7 +2,7 @@ use crate::{
     color_wheel_definition::ColorWheelDefinition, get_angle_degrees::get_angle_degrees,
     get_pixel::GetPixel,
     get_pixel_generator_and_variable_dimension::GetPixelGeneratorAndVariableDimension,
-    pixel_generators::pixel_generator::PixelGenerator, pixel_writer::PixelWriter,
+    pixel_generators::PixelGenerator, pixel_writer::PixelWriter,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -24,13 +24,13 @@ pub trait RenderPixel {
     );
 }
 
-struct DefaultRenderPixel<TGetPixelGeneratorAndVariableDimension, TGetPixel>
+pub struct DefaultRenderPixel<TGetPixelGeneratorAndVariableDimension, TGetPixel>
 where
     TGetPixelGeneratorAndVariableDimension: GetPixelGeneratorAndVariableDimension,
     TGetPixel: GetPixel,
 {
-    get_pixel_generator_and_variable_dimension: TGetPixelGeneratorAndVariableDimension,
-    get_pixel: TGetPixel,
+    pub get_pixel_generator_and_variable_dimension: TGetPixelGeneratorAndVariableDimension,
+    pub get_pixel: TGetPixel,
 }
 
 impl<TGetPixelGeneratorAndVariableDimension, TGetPixel> RenderPixel
@@ -47,9 +47,9 @@ where
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
     ) {
-        let relative_x = image_x.abs_diff(data.center_x);
-        let relative_y = image_y.abs_diff(data.center_y);
-        let distance_from_center = ((relative_x.pow(2) + relative_y.pow(2)) as f64).sqrt();
+        let relative_x = image_x as f64 - data.center_x as f64;
+        let relative_y = image_y as f64 - data.center_y as f64;
+        let distance_from_center = (relative_x.powi(2) + relative_y.powi(2)).sqrt();
 
         if distance_from_center > data.all_generators_size {
             return;
@@ -65,7 +65,7 @@ where
             return;
         }
 
-        let angle_degrees = get_angle_degrees(0., 0., relative_x as f64, relative_y as f64);
+        let angle_degrees = get_angle_degrees(0., 0., relative_x, relative_y);
 
         let pixel_generator_result = pixel_generator_result.unwrap();
         let pixel_generator = pixel_generator_result.pixel_generator;
@@ -93,7 +93,7 @@ mod tests {
     use crate::{
         common::Pixel,
         get_pixel_generator_and_variable_dimension::PixelGeneratorAndVariableDimension,
-        pixel_generators::pixel_generator::MockPixelGenerator, pixel_writer::MockPixelWriter,
+        pixel_generators::MockPixelGenerator, pixel_writer::MockPixelWriter,
     };
 
     use super::*;
