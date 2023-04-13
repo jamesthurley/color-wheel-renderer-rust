@@ -33,7 +33,7 @@ fn main() {
     };
 
     let definition = ColorWheelDefinition {
-        image_size: 2000,
+        image_size: 801,
         margin_size: 0,
         angle_buckets: 18,
         distance_buckets: 12,

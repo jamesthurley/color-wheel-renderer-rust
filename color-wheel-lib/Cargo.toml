@@ -1,0 +1,12 @@
+[package]
+name = "color-wheel-lib"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+float-cmp.workspace = true
+libm.workspace = true
+
+[dev-dependencies]
+mockall.workspace = true

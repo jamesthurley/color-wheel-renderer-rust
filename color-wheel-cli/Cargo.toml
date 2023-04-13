@@ -1,0 +1,10 @@
+[package]
+name = "color-wheel-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+color-wheel-lib = { path = "../color-wheel-lib" }
+
+[dev-dependencies]
