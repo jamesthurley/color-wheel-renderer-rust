@@ -28,7 +28,7 @@ impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariab
         let mut pixel_generator = None;
 
         for current_pixel_generator in definition.pixel_generators.iter() {
-            if distance_from_center < generator_outer_distance {
+            if distance_from_center <= generator_outer_distance {
                 variable_dimension =
                     (distance_from_center - generator_inner_distance) / generator_size;
                 pixel_generator = Some(current_pixel_generator);

@@ -232,7 +232,7 @@ mod tests {
         assert_eq!(test.get_pixel.calls.borrow().len(), 1);
 
         let call = &test.get_pixel.calls.borrow()[0];
-        assert_approx_eq!(f64, call.angle_degrees, 135.);
+        assert_approx_eq!(f64, call.angle_degrees, 45.);
         assert_approx_eq!(f64, call.variable_dimension, 123.);
         assert_eq!(
             call.angle_buckets,

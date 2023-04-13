@@ -16,7 +16,6 @@ impl PixelGenerator for HslFixedLightnessPixelGenerator {
     }
 
     fn get_pixel(&self, angle_degrees: f64, varying_dimension_value: f64) -> Pixel {
-        println!("angle_degrees: {angle_degrees}");
         hsl_to_pixel(angle_degrees, varying_dimension_value, self.lightness)
     }
 }

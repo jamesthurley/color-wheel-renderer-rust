@@ -1,6 +1,6 @@
 use super::common::Pixel;
 
-mod canvas_pixel_writer;
+pub mod canvas_pixel_writer;
 pub mod canvas_pixel_writer_factory;
 mod get_pixel;
 mod get_ppm;
