@@ -3,9 +3,9 @@ use color_wheel_lib::{
     canvas::canvas_pixel_writer::CanvasPixelWriter,
     canvas::canvas_pixel_writer_factory::CanvasPixelWriterFactory,
     color_wheel_definition::ColorWheelDefinition,
-    common::Pixel,
     get_pixel::DefaultGetPixel,
     get_pixel_generator_and_variable_dimension::DefaultGetPixelGeneratorAndVariableDimension,
+    pixel::Pixel,
     pixel_generators::{
         HslFixedLightnessPixelGenerator, HslFixedSaturationPixelGenerator,
         HsvFixedSaturationPixelGenerator, PixelGeneratorConfiguration,

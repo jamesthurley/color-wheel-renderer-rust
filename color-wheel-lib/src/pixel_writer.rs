@@ -1,4 +1,4 @@
-use crate::common::Pixel;
+use crate::pixel::Pixel;
 
 #[cfg_attr(test, mockall::automock)]
 pub trait PixelWriter {

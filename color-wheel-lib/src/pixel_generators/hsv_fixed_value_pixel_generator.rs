@@ -1,4 +1,4 @@
-use crate::common::Pixel;
+use crate::pixel::Pixel;
 
 use super::{
     hsv_to_pixel::hsv_to_pixel, pixel_generator::PixelGenerator,

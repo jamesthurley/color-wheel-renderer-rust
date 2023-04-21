@@ -1,12 +1,16 @@
+use crate::pixel::BYTES_PER_PIXEL;
+
 use super::*;
 
 impl Canvas {
-    pub fn get_pixel(&self, x: usize, y: usize) -> &Pixel {
+    pub fn get_pixel(&self, x: usize, y: usize) -> Pixel {
         if x >= self.width || y >= self.height {
             panic!("Requested pixel is out of bounds: {x},{y}");
         }
 
-        &self.data[x + y * self.width]
+        let pixel_start = (x + y * self.width) * BYTES_PER_PIXEL;
+
+        self.data[pixel_start..pixel_start + BYTES_PER_PIXEL].into()
     }
 }
 
@@ -20,13 +24,13 @@ mod tests {
 
         for x in 0..2 {
             for y in 0..3 {
-                target.set_pixel(x, y, Pixel::new(x as u8, y as u8, 1));
+                target.set_pixel(x, y, Pixel::rgba(x as u8, y as u8, 100, 200));
             }
         }
 
-        assert_eq!(target.get_pixel(0, 0), &Pixel::new(0, 0, 1));
-        assert_eq!(target.get_pixel(1, 2), &Pixel::new(1, 2, 1));
-        assert_eq!(target.get_pixel(1, 1), &Pixel::new(1, 1, 1));
+        assert_eq!(target.get_pixel(0, 0), Pixel::rgba(0, 0, 100, 200));
+        assert_eq!(target.get_pixel(1, 2), Pixel::rgba(1, 2, 100, 200));
+        assert_eq!(target.get_pixel(1, 1), Pixel::rgba(1, 1, 100, 200));
     }
 
     #[test]

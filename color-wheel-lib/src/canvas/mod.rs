@@ -1,4 +1,7 @@
-use super::common::Pixel;
+use crate::pixel::BYTES_PER_PIXEL;
+
+use super::pixel::Pixel;
+use super::pixel::TRANSPARENT;
 
 pub mod canvas_pixel_writer;
 pub mod canvas_pixel_writer_factory;
@@ -10,7 +13,7 @@ mod set_pixel;
 pub struct Canvas {
     width: usize,
     height: usize,
-    data: Vec<Pixel>,
+    data: Vec<u8>,
 }
 
 impl Canvas {
@@ -18,7 +21,7 @@ impl Canvas {
         Canvas {
             width,
             height,
-            data: vec![Pixel::new(0, 0, 0); width * height],
+            data: vec![TRANSPARENT; width * height * BYTES_PER_PIXEL],
         }
     }
 
@@ -30,8 +33,8 @@ impl Canvas {
         self.height
     }
 
-    pub fn data(&self) -> &[Pixel] {
-        &self.data
+    pub fn iter_pixels(&self) -> impl Iterator<Item = Pixel> + '_ {
+        self.data.chunks(BYTES_PER_PIXEL).map(|chunk| chunk.into())
     }
 }
 
@@ -44,16 +47,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_should_initialize_to_black() {
+    fn it_should_initialize_to_transparent() {
         let result = canvas(2, 3);
 
         assert_eq!(result.width(), 2);
         assert_eq!(result.height(), 3);
-        assert_eq!(result.data().len(), 6);
-        for pixel in result.data() {
-            assert_eq!(pixel.red, 0);
-            assert_eq!(pixel.green, 0);
-            assert_eq!(pixel.blue, 0);
+        assert_eq!(result.data.len(), 6 * BYTES_PER_PIXEL);
+
+        let transparent = Pixel::transparent();
+
+        for y in 0..result.height() {
+            for x in 0..result.width() {
+                assert_eq!(result.get_pixel(x, y), transparent);
+            }
         }
     }
 }

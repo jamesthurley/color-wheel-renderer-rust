@@ -1,4 +1,4 @@
-use crate::{bucket::bucket, common::Pixel, pixel_generators::PixelGenerator};
+use crate::{bucket::bucket, pixel::Pixel, pixel_generators::PixelGenerator};
 
 pub trait GetPixel {
     fn execute<TPixelGenerator: PixelGenerator>(
@@ -77,7 +77,7 @@ mod tests {
                 is_angle_inverted,
             });
 
-        let expected_pixel = Pixel::new(1, 2, 3);
+        let expected_pixel = Pixel::rgb(1, 2, 3);
         pixel_generator
             .expect_get_pixel()
             .with(

@@ -91,9 +91,8 @@ mod tests {
     use mockall::predicate::*;
 
     use crate::{
-        common::Pixel,
         get_pixel_generator_and_variable_dimension::PixelGeneratorAndVariableDimension,
-        pixel_generators::MockPixelGenerator, pixel_writer::MockPixelWriter,
+        pixel::Pixel, pixel_generators::MockPixelGenerator, pixel_writer::MockPixelWriter,
     };
 
     use super::*;
@@ -212,7 +211,7 @@ mod tests {
 
     #[test]
     fn when_pixel_generator_returns_pixel_it_should_write_pixel() {
-        let pixel = Pixel::new(1, 2, 3);
+        let pixel = Pixel::rgb(1, 2, 3);
         let mut test = setup(0, 123., pixel);
 
         test.pixel_writer

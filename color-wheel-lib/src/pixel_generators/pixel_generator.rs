@@ -1,4 +1,4 @@
-use crate::common::Pixel;
+use crate::pixel::Pixel;
 
 use super::pixel_generator_configuration::PixelGeneratorConfiguration;
 

@@ -1,4 +1,4 @@
-use crate::{common::Pixel, pixel_writer::PixelWriter};
+use crate::{pixel::Pixel, pixel_writer::PixelWriter};
 
 use super::Canvas;
 

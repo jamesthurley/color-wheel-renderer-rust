@@ -1,4 +1,4 @@
-use crate::common::Pixel;
+use crate::pixel::Pixel;
 
 use super::intermediate_cxm_to_pixel::intermediate_cxm_to_pixel;
 
@@ -53,6 +53,6 @@ mod tests {
             Pixel::from_normalized(1., 0., 0.)
         );
 
-        assert_eq!(hsv_to_pixel(123., 0.35, 0.69), Pixel::new(114, 176, 117));
+        assert_eq!(hsv_to_pixel(123., 0.35, 0.69), Pixel::rgb(114, 176, 117));
     }
 }

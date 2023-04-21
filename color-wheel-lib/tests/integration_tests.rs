@@ -3,9 +3,9 @@ use color_wheel_lib::{
     canvas::canvas_pixel_writer::CanvasPixelWriter,
     canvas::canvas_pixel_writer_factory::CanvasPixelWriterFactory,
     color_wheel_definition::ColorWheelDefinition,
-    common::Pixel,
     get_pixel::DefaultGetPixel,
     get_pixel_generator_and_variable_dimension::DefaultGetPixelGeneratorAndVariableDimension,
+    pixel::Pixel,
     pixel_generators::{
         HslFixedLightnessPixelGenerator, HslFixedSaturationPixelGenerator,
         HsvFixedSaturationPixelGenerator, PixelGeneratorConfiguration,
@@ -68,22 +68,22 @@ fn hsv_fixed_saturation_nested() {
 
     let pixel_writer = render_color_wheel_set.execute(&[definition], 0);
 
-    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), &Pixel::new(170, 0, 0));
+    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), Pixel::rgb(170, 0, 0));
     assert_eq!(
         pixel_writer.canvas.get_pixel(15, 6),
-        &Pixel::new(170, 85, 85)
+        Pixel::rgb(170, 85, 85)
     );
     assert_eq!(
         pixel_writer.canvas.get_pixel(15, 24),
-        &Pixel::new(85, 170, 170)
+        Pixel::rgb(85, 170, 170)
     );
     assert_eq!(
         pixel_writer.canvas.get_pixel(10, 15),
-        &Pixel::new(195, 175, 234)
+        Pixel::rgb(195, 175, 234)
     );
     assert_eq!(
         pixel_writer.canvas.get_pixel(20, 15),
-        &Pixel::new(214, 234, 175)
+        Pixel::rgb(214, 234, 175)
     );
 
     // write(pixel_writer);
@@ -135,15 +135,9 @@ fn hsl_fixed_saturation_adjacent() {
 
     let pixel_writer = render_color_wheel_set.execute(&[definition1, definition2, definition3], 1);
 
-    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), &Pixel::new(85, 0, 0));
-    assert_eq!(
-        pixel_writer.canvas.get_pixel(47, 1),
-        &Pixel::new(64, 21, 21)
-    );
-    assert_eq!(
-        pixel_writer.canvas.get_pixel(79, 1),
-        &Pixel::new(53, 32, 32)
-    );
+    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), Pixel::rgb(85, 0, 0));
+    assert_eq!(pixel_writer.canvas.get_pixel(47, 1), Pixel::rgb(64, 21, 21));
+    assert_eq!(pixel_writer.canvas.get_pixel(79, 1), Pixel::rgb(53, 32, 32));
 
     // write(pixel_writer);
 }
@@ -183,13 +177,13 @@ fn hsl_fixed_lightness_adjacent_margin() {
 
     let pixel_writer = render_color_wheel_set.execute(&[definition1, definition2], 1);
 
-    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), &Pixel::new(0, 0, 0));
+    assert_eq!(pixel_writer.canvas.get_pixel(15, 1), Pixel::transparent());
     assert_eq!(
         pixel_writer.canvas.get_pixel(15, 2),
-        &Pixel::new(247, 59, 59)
+        Pixel::rgb(247, 59, 59)
     );
-    assert_eq!(pixel_writer.canvas.get_pixel(47, 3), &Pixel::new(0, 0, 0));
-    assert_eq!(pixel_writer.canvas.get_pixel(47, 4), &Pixel::new(196, 8, 8));
+    assert_eq!(pixel_writer.canvas.get_pixel(47, 3), Pixel::transparent());
+    assert_eq!(pixel_writer.canvas.get_pixel(47, 4), Pixel::rgb(196, 8, 8));
 
     // write(pixel_writer);
 }

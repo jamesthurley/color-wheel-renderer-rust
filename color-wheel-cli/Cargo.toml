@@ -5,6 +5,7 @@ edition.workspace = true
 authors.workspace = true
 
 [dependencies]
+clap = { version = "4.2.2", features = ["derive"] }
 color-wheel-lib = { path = "../color-wheel-lib" }
 
 [dev-dependencies]

@@ -1,4 +1,4 @@
-use crate::common::Pixel;
+use crate::pixel::Pixel;
 
 pub fn intermediate_cxm_to_pixel(hue: f64, c: f64, x: f64, m: f64) -> Pixel {
     let i = match hue {

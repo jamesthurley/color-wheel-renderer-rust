@@ -1,11 +1,11 @@
 pub mod bucket;
 pub mod canvas;
 pub mod color_wheel_definition;
-pub mod common;
 pub mod get_angle_degrees;
 pub mod get_pixel;
 pub mod get_pixel_generator_and_variable_dimension;
 pub mod offset_pixel_writer;
+pub mod pixel;
 pub mod pixel_generators;
 pub mod pixel_writer;
 pub mod render_color_wheel;

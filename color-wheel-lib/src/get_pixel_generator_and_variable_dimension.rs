@@ -50,7 +50,7 @@ impl GetPixelGeneratorAndVariableDimension for DefaultGetPixelGeneratorAndVariab
 mod tests {
     use float_cmp::assert_approx_eq;
 
-    use crate::{common::Pixel, pixel_generators::PixelGeneratorConfiguration};
+    use crate::{pixel::Pixel, pixel_generators::PixelGeneratorConfiguration};
 
     use super::*;
 

@@ -1,4 +1,4 @@
-use crate::{common::Pixel, pixel_writer::PixelWriter};
+use crate::{pixel::Pixel, pixel_writer::PixelWriter};
 
 pub struct OffsetPixelWriter<'w, TPixelWriter>
 where
@@ -29,7 +29,7 @@ mod tests {
     fn offset_pixel_writer_should_offset_x_and_y() {
         let mut pixel_writer = MockPixelWriter::new();
 
-        let pixel = Pixel::new(1, 2, 3);
+        let pixel = Pixel::rgb(1, 2, 3);
 
         pixel_writer
             .expect_write_pixel()
