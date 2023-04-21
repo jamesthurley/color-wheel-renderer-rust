@@ -6,8 +6,8 @@ pub trait GetPixel {
         pixel_generator: &TPixelGenerator,
         angle_degrees: f64,
         variable_dimension: f64,
-        angle_buckets: usize,
-        distance_buckets: usize,
+        angle_buckets: u32,
+        distance_buckets: u32,
     ) -> Pixel;
 }
 
@@ -18,8 +18,8 @@ impl GetPixel for DefaultGetPixel {
         pixel_generator: &TPixelGenerator,
         mut angle_degrees: f64,
         mut variable_dimension: f64,
-        angle_buckets: usize,
-        distance_buckets: usize,
+        angle_buckets: u32,
+        distance_buckets: u32,
     ) -> Pixel {
         let configuration = pixel_generator.configuration();
 

@@ -7,7 +7,7 @@ pub struct CanvasPixelWriterFactory {}
 impl PixelWriterFactory for CanvasPixelWriterFactory {
     type Result = CanvasPixelWriter;
 
-    fn create(&self, width: usize, height: usize) -> Self::Result {
+    fn create(&self, width: u32, height: u32) -> Self::Result {
         CanvasPixelWriter::new(width, height)
     }
 }

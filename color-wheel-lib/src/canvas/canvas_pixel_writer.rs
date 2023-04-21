@@ -7,7 +7,7 @@ pub struct CanvasPixelWriter {
 }
 
 impl CanvasPixelWriter {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: u32, height: u32) -> Self {
         Self {
             canvas: Canvas::new(width, height),
         }
@@ -15,7 +15,7 @@ impl CanvasPixelWriter {
 }
 
 impl PixelWriter for CanvasPixelWriter {
-    fn write_pixel(&mut self, x: usize, y: usize, color: Pixel) {
+    fn write_pixel(&mut self, x: u32, y: u32, color: Pixel) {
         self.canvas.set_pixel(x, y, color);
     }
 }

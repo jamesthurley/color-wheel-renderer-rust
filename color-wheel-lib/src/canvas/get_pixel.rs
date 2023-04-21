@@ -3,12 +3,12 @@ use crate::pixel::BYTES_PER_PIXEL;
 use super::*;
 
 impl Canvas {
-    pub fn get_pixel(&self, x: usize, y: usize) -> Pixel {
+    pub fn get_pixel(&self, x: u32, y: u32) -> Pixel {
         if x >= self.width || y >= self.height {
             panic!("Requested pixel is out of bounds: {x},{y}");
         }
 
-        let pixel_start = (x + y * self.width) * BYTES_PER_PIXEL;
+        let pixel_start = (x as usize + y as usize * self.width as usize) * BYTES_PER_PIXEL;
 
         self.data[pixel_start..pixel_start + BYTES_PER_PIXEL].into()
     }

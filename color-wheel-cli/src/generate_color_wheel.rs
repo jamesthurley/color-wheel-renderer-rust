@@ -54,16 +54,16 @@ where
     TPixelGenerator: PixelGenerator,
     TCreatePixelGenerator: CreatePixelGenerator<TPixelGenerator>,
 {
-    let image_size: usize = cli.diameter as usize + cli.margin as usize * 2;
+    let image_size: u32 = cli.supersampling * (cli.diameter + (cli.margin * 2));
 
     let configuration = create_pixel_generator_configuration(cli);
 
     let color_wheel_definitions = if cli.expand {
         vec![ColorWheelDefinition {
             image_size,
-            margin_size: cli.margin as usize,
-            angle_buckets: cli.angular_buckets as usize,
-            distance_buckets: cli.radial_buckets as usize,
+            margin_size: cli.margin,
+            angle_buckets: cli.angular_buckets,
+            distance_buckets: cli.radial_buckets,
             pixel_generators: cli
                 .fixed
                 .iter()
@@ -75,9 +75,9 @@ where
             .iter()
             .map(|v| ColorWheelDefinition {
                 image_size,
-                margin_size: cli.margin as usize,
-                angle_buckets: cli.angular_buckets as usize,
-                distance_buckets: cli.radial_buckets as usize,
+                margin_size: cli.margin,
+                angle_buckets: cli.angular_buckets,
+                distance_buckets: cli.radial_buckets,
                 pixel_generators: vec![create_pixel_generator.execute(*v, configuration)],
             })
             .collect()

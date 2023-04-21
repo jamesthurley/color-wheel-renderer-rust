@@ -4,14 +4,14 @@ pub enum BucketDirection {
     Up,
 }
 
-pub fn bucket(value: f64, maximum: f64, buckets: usize, direction: BucketDirection) -> f64 {
+pub fn bucket(value: f64, maximum: f64, buckets: u32, direction: BucketDirection) -> f64 {
     match direction {
         BucketDirection::Down => bucket_down(value, maximum, buckets),
         BucketDirection::Up => bucket_up(value, maximum, buckets),
     }
 }
 
-fn bucket_down(value: f64, maximum: f64, buckets: usize) -> f64 {
+fn bucket_down(value: f64, maximum: f64, buckets: u32) -> f64 {
     if buckets < 1 {
         return value;
     }
@@ -21,7 +21,7 @@ fn bucket_down(value: f64, maximum: f64, buckets: usize) -> f64 {
     (value / factor).floor() * factor
 }
 
-fn bucket_up(value: f64, maximum: f64, buckets: usize) -> f64 {
+fn bucket_up(value: f64, maximum: f64, buckets: u32) -> f64 {
     maximum - bucket_down(maximum - value, maximum, buckets)
 }
 

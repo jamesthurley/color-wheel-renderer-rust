@@ -139,8 +139,8 @@ mod tests {
     }
 
     struct MockRenderPixelCall {
-        image_x: usize,
-        image_y: usize,
+        image_x: u32,
+        image_y: u32,
         data: RenderPixelData,
     }
     struct MockRenderPixel {
@@ -149,8 +149,8 @@ mod tests {
     impl RenderPixel for Rc<MockRenderPixel> {
         fn execute<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>(
             &self,
-            image_x: usize,
-            image_y: usize,
+            image_x: u32,
+            image_y: u32,
             data: &RenderPixelData,
             _definition: &ColorWheelDefinition<TPixelGenerator>,
             _pixel_writer: &mut TPixelWriter,

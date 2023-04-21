@@ -5,15 +5,15 @@ where
     TPixelWriter: PixelWriter,
 {
     pub pixel_writer: &'w mut TPixelWriter,
-    pub offset_x: usize,
-    pub offset_y: usize,
+    pub offset_x: u32,
+    pub offset_y: u32,
 }
 
 impl<'w, TPixelWriter> PixelWriter for OffsetPixelWriter<'w, TPixelWriter>
 where
     TPixelWriter: PixelWriter,
 {
-    fn write_pixel(&mut self, x: usize, y: usize, color: Pixel) {
+    fn write_pixel(&mut self, x: u32, y: u32, color: Pixel) {
         self.pixel_writer
             .write_pixel(x + self.offset_x, y + self.offset_y, color);
     }

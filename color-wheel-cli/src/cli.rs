@@ -1,18 +1,20 @@
 use clap::{command, CommandFactory, Parser, ValueEnum};
 use std::path::PathBuf;
 
+use crate::OUTPUT_FILE_EXTENSION;
+
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     pub color_wheel_type: ColorWheelType,
 
     /// Number of angular buckets to divide colors into. Defaults to 0, which gives a smooth output.
-    #[arg(short, long, value_name = "COUNT", default_value_t = 0)]
-    pub angular_buckets: u8,
+    #[arg(short, long, value_name = "COUNT", default_value_t = 0, value_parser = clap::value_parser!(u32).range(0..=1000))]
+    pub angular_buckets: u32,
 
     /// Number of radial buckets to divide colors into. Defaults to 0, which gives a smooth output.
-    #[arg(short, long, value_name = "COUNT", default_value_t = 0)]
-    pub radial_buckets: u8,
+    #[arg(short, long, value_name = "COUNT", default_value_t = 0, value_parser = clap::value_parser!(u32).range(0..=1000))]
+    pub radial_buckets: u32,
 
     /// Fixed values at which to render. Can be specified multiple times. Defaults to 0.5 for lightness or 1 for saturation and value.
     #[arg(short, long, value_name = "NUMBER")]
@@ -41,6 +43,10 @@ pub struct Cli {
     /// Reverses the direction of radial bucketing from the default. Defaults to outwards, or inwards if colors are reversed.
     #[arg(short = 'b', long)]
     pub reverse_radial_bucketing: bool,
+
+    // How many times supersampled should the output be. Default is 2x supersampling.
+    #[arg(short, long, value_name = "COUNT", default_value_t = 4, value_parser = clap::value_parser!(u32).range(1..=8))]
+    pub supersampling: u32,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -61,11 +67,11 @@ pub fn process_cli_options(cli: Cli) -> Cli {
     }
 
     if let Some(output_value) = cli.output.clone() {
-        if !output_value.ends_with(".ppm") {
+        if !output_value.ends_with(OUTPUT_FILE_EXTENSION) {
             let mut cmd = Cli::command();
             cmd.error(
                 clap::error::ErrorKind::InvalidValue,
-                "Output file must end in .ppm",
+                format!("Output file must end in {OUTPUT_FILE_EXTENSION}"),
             )
             .exit();
         }

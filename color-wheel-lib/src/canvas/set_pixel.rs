@@ -1,12 +1,12 @@
 use super::*;
 
 impl Canvas {
-    pub fn set_pixel(&mut self, x: usize, y: usize, pixel: Pixel) {
+    pub fn set_pixel(&mut self, x: u32, y: u32, pixel: Pixel) {
         if x >= self.width || y >= self.height {
             panic!("Requested pixel location is out of bounds: {x},{y}");
         }
 
-        let pixel_start = (x + y * self.width) * BYTES_PER_PIXEL;
+        let pixel_start = (x as usize + y as usize * self.width as usize) * BYTES_PER_PIXEL;
 
         self.data[pixel_start..pixel_start + BYTES_PER_PIXEL].copy_from_slice(&pixel.data);
     }

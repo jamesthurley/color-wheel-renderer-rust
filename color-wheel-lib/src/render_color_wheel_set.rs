@@ -10,7 +10,7 @@ pub trait RenderColorWheelSet<TPixelWriter: PixelWriter> {
     fn execute<TPixelGenerator: PixelGenerator>(
         &self,
         color_wheels: &[ColorWheelDefinition<TPixelGenerator>],
-        spacing: usize,
+        spacing: u32,
     ) -> TPixelWriter;
 }
 
@@ -34,17 +34,22 @@ where
     fn execute<TPixelGenerator: PixelGenerator>(
         &self,
         color_wheels: &[ColorWheelDefinition<TPixelGenerator>],
-        spacing: usize,
+        spacing: u32,
     ) -> TPixelWriterFactory::Result {
         if color_wheels.is_empty() {
             panic!("No color wheels to render.");
         }
 
+        let color_wheels_count: u32 = color_wheels
+            .len()
+            .try_into()
+            .expect("Too many color wheels.");
+
         // Color wheels are laid out horizontally, so we take the max size for the height
         // and the sum of the sizes with padding added for the width.
         let overall_height = color_wheels.iter().map(|v| v.image_size).max().unwrap();
-        let overall_width = color_wheels.iter().map(|v| v.image_size).sum::<usize>()
-            + (spacing * (color_wheels.len() - 1));
+        let overall_width = color_wheels.iter().map(|v| v.image_size).sum::<u32>()
+            + (spacing * (color_wheels_count - 1));
 
         let mut pixel_writer = self
             .pixel_writer_factory
@@ -128,12 +133,12 @@ mod tests {
 
     #[derive(Default)]
     struct MockPixelWriterFactory {
-        pub calls: RefCell<Vec<(usize, usize)>>,
+        pub calls: RefCell<Vec<(u32, u32)>>,
     }
     impl PixelWriterFactory for Rc<MockPixelWriterFactory> {
         type Result = MockPixelWriter;
 
-        fn create(&self, width: usize, height: usize) -> Self::Result {
+        fn create(&self, width: u32, height: u32) -> Self::Result {
             self.calls.borrow_mut().push((width, height));
             MockPixelWriter::new()
         }
@@ -141,9 +146,9 @@ mod tests {
 
     #[derive(Eq, PartialEq, Copy, Clone, Debug)]
     struct RenderColorWheelCall {
-        pub wheel_size: usize,
-        pub offset_x: usize,
-        pub offset_y: usize,
+        pub wheel_size: u32,
+        pub offset_x: u32,
+        pub offset_y: u32,
     }
 
     #[derive(Default)]

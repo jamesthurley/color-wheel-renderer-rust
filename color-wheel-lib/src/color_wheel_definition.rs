@@ -4,9 +4,9 @@ pub struct ColorWheelDefinition<TPixelGenerator>
 where
     TPixelGenerator: PixelGenerator,
 {
-    pub image_size: usize,
-    pub margin_size: usize,
-    pub angle_buckets: usize,
-    pub distance_buckets: usize,
+    pub image_size: u32,
+    pub margin_size: u32,
+    pub angle_buckets: u32,
+    pub distance_buckets: u32,
     pub pixel_generators: Vec<TPixelGenerator>,
 }

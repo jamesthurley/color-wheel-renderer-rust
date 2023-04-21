@@ -7,8 +7,8 @@ use crate::{
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RenderPixelData {
-    pub center_x: usize,
-    pub center_y: usize,
+    pub center_x: u32,
+    pub center_y: u32,
     pub all_generators_size: f64,
     pub generator_size: f64,
 }
@@ -16,8 +16,8 @@ pub struct RenderPixelData {
 pub trait RenderPixel {
     fn execute<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>(
         &self,
-        image_x: usize,
-        image_y: usize,
+        image_x: u32,
+        image_y: u32,
         data: &RenderPixelData,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
@@ -41,8 +41,8 @@ where
 {
     fn execute<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>(
         &self,
-        image_x: usize,
-        image_y: usize,
+        image_x: u32,
+        image_y: u32,
         data: &RenderPixelData,
         definition: &ColorWheelDefinition<TPixelGenerator>,
         pixel_writer: &mut TPixelWriter,
@@ -282,8 +282,8 @@ mod tests {
     struct MockGetPixelCall {
         angle_degrees: f64,
         variable_dimension: f64,
-        angle_buckets: usize,
-        distance_buckets: usize,
+        angle_buckets: u32,
+        distance_buckets: u32,
     }
     struct MockGetPixel {
         result: Pixel,
@@ -295,8 +295,8 @@ mod tests {
             _pixel_generator: &TPixelGenerator,
             angle_degrees: f64,
             variable_dimension: f64,
-            angle_buckets: usize,
-            distance_buckets: usize,
+            angle_buckets: u32,
+            distance_buckets: u32,
         ) -> Pixel {
             self.calls.borrow_mut().push(MockGetPixelCall {
                 angle_degrees,
