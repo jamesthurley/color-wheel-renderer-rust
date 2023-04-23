@@ -3,8 +3,6 @@ use crate::pixel::BYTES_PER_PIXEL;
 use super::pixel::Pixel;
 use super::pixel::TRANSPARENT;
 
-pub mod canvas_pixel_writer;
-pub mod canvas_pixel_writer_factory;
 mod get_pixel;
 mod get_ppm;
 mod set_pixel;
@@ -39,6 +37,10 @@ impl Canvas {
 
     pub fn data(&self) -> &[u8] {
         &self.data
+    }
+
+    pub fn data_mut(&mut self) -> &mut [u8] {
+        &mut self.data
     }
 
     pub fn eject_data(self) -> Vec<u8> {

@@ -2,7 +2,7 @@ use crate::{
     color_wheel_definition::ColorWheelDefinition, get_angle_degrees::get_angle_degrees,
     get_pixel::GetPixel,
     get_pixel_generator_and_variable_dimension::GetPixelGeneratorAndVariableDimension,
-    pixel_generators::PixelGenerator, pixel_writer::PixelWriter,
+    pixel_generators::PixelGenerator, row_pixel_writer::RowPixelWriter,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -14,14 +14,15 @@ pub struct RenderPixelData {
 }
 
 pub trait RenderPixel {
-    fn execute<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>(
+    fn execute<TPixelGenerator: PixelGenerator, TRowPixelWriter>(
         &self,
         image_x: u32,
         image_y: u32,
         data: &RenderPixelData,
         definition: &ColorWheelDefinition<TPixelGenerator>,
-        pixel_writer: &mut TPixelWriter,
-    );
+        pixel_writer: &mut TRowPixelWriter,
+    ) where
+        TRowPixelWriter: for<'canvas> RowPixelWriter;
 }
 
 pub struct DefaultRenderPixel<TGetPixelGeneratorAndVariableDimension, TGetPixel>
@@ -39,14 +40,16 @@ where
     TGetPixelGeneratorAndVariableDimension: GetPixelGeneratorAndVariableDimension,
     TGetPixel: GetPixel,
 {
-    fn execute<TPixelGenerator: PixelGenerator, TPixelWriter: PixelWriter>(
+    fn execute<TPixelGenerator: PixelGenerator, TRowPixelWriter>(
         &self,
         image_x: u32,
         image_y: u32,
         data: &RenderPixelData,
         definition: &ColorWheelDefinition<TPixelGenerator>,
-        pixel_writer: &mut TPixelWriter,
-    ) {
+        pixel_writer: &mut TRowPixelWriter,
+    ) where
+        TRowPixelWriter: for<'canvas> RowPixelWriter,
+    {
         let relative_x = image_x as f64 - data.center_x as f64;
         let relative_y = image_y as f64 - data.center_y as f64;
         let distance_from_center = (relative_x.powi(2) + relative_y.powi(2)).sqrt();
@@ -92,13 +95,15 @@ mod tests {
 
     use crate::{
         get_pixel_generator_and_variable_dimension::PixelGeneratorAndVariableDimension,
-        pixel::Pixel, pixel_generators::MockPixelGenerator, pixel_writer::MockPixelWriter,
+        pixel::Pixel,
+        pixel_generators::MockPixelGenerator,
+        row_pixel_writer::{MockRowPixelWriter, RowPixelWriter},
     };
 
     use super::*;
 
     struct SetupData {
-        pub pixel_writer: MockPixelWriter,
+        pub pixel_writer: MockRowPixelWriter,
         pub get_pixel_generator_and_variable_dimension:
             Rc<MockGetPixelGeneratorAndVariableDimension>,
         pub get_pixel: Rc<MockGetPixel>,
@@ -109,7 +114,7 @@ mod tests {
     }
 
     fn setup(generator_index: isize, variable_dimension: f64, pixel: Pixel) -> SetupData {
-        let pixel_writer = MockPixelWriter::new();
+        let pixel_writer = MockRowPixelWriter::new();
 
         let get_pixel_generator_and_variable_dimension =
             Rc::new(MockGetPixelGeneratorAndVariableDimension {

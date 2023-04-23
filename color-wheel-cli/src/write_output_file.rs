@@ -1,11 +1,11 @@
 use crate::OUTPUT_FILE_EXTENSION;
 use std::path::PathBuf;
 
-use color_wheel_lib::canvas::canvas_pixel_writer::CanvasPixelWriter;
+use color_wheel_lib::canvas_pixel_writer::DefaultCanvasPixelWriter;
 
 use crate::cli::Cli;
 
-pub fn write_output_file(cli: Cli, pixel_writer: CanvasPixelWriter) {
+pub fn write_output_file(cli: Cli, pixel_writer: DefaultCanvasPixelWriter) {
     let output_file_path = cli
         .output
         .unwrap_or(PathBuf::from(format!("output{OUTPUT_FILE_EXTENSION}")));

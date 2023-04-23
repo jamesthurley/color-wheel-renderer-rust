@@ -1,8 +1,6 @@
 use color_wheel_lib::{
-    canvas::{
-        canvas_pixel_writer::CanvasPixelWriter,
-        canvas_pixel_writer_factory::CanvasPixelWriterFactory,
-    },
+    canvas_pixel_writer::DefaultCanvasPixelWriter,
+    canvas_pixel_writer_factory::DefaultCanvasPixelWriterFactory,
     color_wheel_definition::ColorWheelDefinition,
     get_pixel::DefaultGetPixel,
     get_pixel_generator_and_variable_dimension::DefaultGetPixelGeneratorAndVariableDimension,
@@ -21,7 +19,7 @@ use crate::{
     create_pixel_generator_configuration::create_pixel_generator_configuration,
 };
 
-pub fn generate_color_wheel(cli: &Cli) -> CanvasPixelWriter {
+pub fn generate_color_wheel(cli: &Cli) -> DefaultCanvasPixelWriter {
     let create_pixel_generator = DefaultCreatePixelGenerator {};
     match cli.color_wheel_type {
         ColorWheelType::HslFixedSaturation => generate_specific_color_wheel::<
@@ -49,7 +47,7 @@ pub fn generate_color_wheel(cli: &Cli) -> CanvasPixelWriter {
 fn generate_specific_color_wheel<TPixelGenerator, TCreatePixelGenerator>(
     cli: &Cli,
     create_pixel_generator: TCreatePixelGenerator,
-) -> CanvasPixelWriter
+) -> DefaultCanvasPixelWriter
 where
     TPixelGenerator: PixelGenerator,
     TCreatePixelGenerator: CreatePixelGenerator<TPixelGenerator>,
@@ -91,7 +89,7 @@ where
                 get_pixel: DefaultGetPixel {},
             },
         },
-        pixel_writer_factory: CanvasPixelWriterFactory {},
+        pixel_writer_factory: DefaultCanvasPixelWriterFactory {},
     };
 
     render_color_wheel_set.execute(&color_wheel_definitions, 0)

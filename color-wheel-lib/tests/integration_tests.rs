@@ -1,7 +1,7 @@
 use color_wheel_lib::{
     bucket::BucketDirection,
-    canvas::canvas_pixel_writer::CanvasPixelWriter,
-    canvas::canvas_pixel_writer_factory::CanvasPixelWriterFactory,
+    canvas_pixel_writer::DefaultCanvasPixelWriter,
+    canvas_pixel_writer_factory::DefaultCanvasPixelWriterFactory,
     color_wheel_definition::ColorWheelDefinition,
     get_pixel::DefaultGetPixel,
     get_pixel_generator_and_variable_dimension::DefaultGetPixelGeneratorAndVariableDimension,
@@ -16,7 +16,7 @@ use color_wheel_lib::{
     render_pixel::DefaultRenderPixel,
 };
 
-fn setup() -> impl RenderColorWheelSet<CanvasPixelWriter> {
+fn setup() -> impl RenderColorWheelSet<Result = DefaultCanvasPixelWriter> {
     DefaultRenderColorWheelSet {
         render_color_wheel: DefaultRenderColorWheel {
             render_pixel: DefaultRenderPixel {
@@ -25,12 +25,12 @@ fn setup() -> impl RenderColorWheelSet<CanvasPixelWriter> {
                 get_pixel: DefaultGetPixel {},
             },
         },
-        pixel_writer_factory: CanvasPixelWriterFactory {},
+        pixel_writer_factory: DefaultCanvasPixelWriterFactory {},
     }
 }
 
 #[allow(dead_code)]
-fn write(pixel_writer: CanvasPixelWriter) {
+fn write(pixel_writer: DefaultCanvasPixelWriter) {
     std::fs::write("./output.ppm", pixel_writer.canvas.get_ppm()).expect("Failed to write canvas.");
 }
 

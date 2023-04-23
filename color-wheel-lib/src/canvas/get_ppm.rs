@@ -17,8 +17,8 @@ impl Canvas {
             let mut is_first_value_on_line = true;
             let mut line_length = 0;
             for x in 0..self.width {
-                let color: Pixel = self.get_pixel(x, y);
-                let values = [color.red(), color.green(), color.blue()];
+                let pixel: Pixel = self.get_pixel(x, y);
+                let values = [pixel.red(), pixel.green(), pixel.blue()];
 
                 for value in values {
                     if (line_length + MAX_COLOR_ELEMENT_LENGTH) > PPM_MAX_LINE_LENGTH {
