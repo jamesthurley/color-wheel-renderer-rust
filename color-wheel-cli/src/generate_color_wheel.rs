@@ -9,6 +9,7 @@ use color_wheel_lib::{
         HsvFixedSaturationPixelGenerator, HsvFixedValuePixelGenerator, PixelGenerator,
     },
     render_color_wheel::DefaultRenderColorWheel,
+    render_color_wheel_rows::DefaultRenderColorWheelRows,
     render_color_wheel_set::{DefaultRenderColorWheelSet, RenderColorWheelSet},
     render_pixel::DefaultRenderPixel,
 };
@@ -83,10 +84,12 @@ where
 
     let render_color_wheel_set = DefaultRenderColorWheelSet {
         render_color_wheel: DefaultRenderColorWheel {
-            render_pixel: DefaultRenderPixel {
-                get_pixel_generator_and_variable_dimension:
-                    DefaultGetPixelGeneratorAndVariableDimension {},
-                get_pixel: DefaultGetPixel {},
+            render_color_wheel_rows: DefaultRenderColorWheelRows {
+                render_pixel: DefaultRenderPixel {
+                    get_pixel_generator_and_variable_dimension:
+                        DefaultGetPixelGeneratorAndVariableDimension {},
+                    get_pixel: DefaultGetPixel {},
+                },
             },
         },
         pixel_writer_factory: DefaultCanvasPixelWriterFactory {},

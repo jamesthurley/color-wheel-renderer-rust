@@ -95,9 +95,7 @@ mod tests {
 
     use crate::{
         get_pixel_generator_and_variable_dimension::PixelGeneratorAndVariableDimension,
-        pixel::Pixel,
-        pixel_generators::MockPixelGenerator,
-        row_pixel_writer::{MockRowPixelWriter, RowPixelWriter},
+        pixel::Pixel, pixel_generators::MockPixelGenerator, row_pixel_writer::MockRowPixelWriter,
     };
 
     use super::*;

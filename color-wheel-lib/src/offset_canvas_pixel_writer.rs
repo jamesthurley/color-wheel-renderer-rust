@@ -35,32 +35,67 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::row_pixel_writer::MockPixelWriter;
+
+    use crate::{
+        canvas_pixel_writer::DefaultCanvasPixelWriter,
+        pixel::Pixel,
+        row_pixel_writer::{MockRowPixelWriter, RowPixelWriter},
+    };
 
     use super::*;
 
     #[test]
-    fn offset_pixel_writer_should_offset_x_and_y() {
-        let mut pixel_writer = MockCanvasPixelWriter::new();
-
-        let pixel = Pixel::rgb(1, 2, 3);
-
-        pixel_writer
-            .expect_write_pixel()
-            .with(
-                mockall::predicate::eq(11),
-                mockall::predicate::eq(22),
-                mockall::predicate::eq(pixel),
-            )
-            .once()
-            .return_const(());
+    fn offset_pixel_writer_should_return_offset_row_pixel_writers() {
+        let mut canvas_pixel_writer = MockCanvasPixelWriter {};
 
         let mut offset_pixel_writer = OffsetCanvasPixelWriter {
-            canvas_pixel_writer: &mut pixel_writer,
-            offset_x: 10,
-            offset_y: 20,
+            canvas_pixel_writer: &mut canvas_pixel_writer,
+            offset_x: 3,
+            offset_y: 4,
         };
 
-        offset_pixel_writer.write_pixel(1, 2, pixel);
+        let rows = offset_pixel_writer.rows_mut();
+
+        assert_eq!(rows.len(), 6);
+        assert!(rows
+            .iter()
+            .all(|row| row.offset_x == 3 && row.offset_y == 4));
+    }
+
+    struct MockCanvasPixelWriter {}
+
+    impl CanvasPixelWriter for MockCanvasPixelWriter {
+        type RowPixelWriter<'canvas> = MockRowPixelWriter;
+
+        fn rows_mut(&mut self) -> Vec<Self::RowPixelWriter<'_>> {
+            (0..10).map(|_| MockRowPixelWriter::new()).collect()
+        }
+    }
+
+    #[test]
+    fn it_should_write_to_correct_buffer_locations() {
+        let mut canvas_pixel_writer = DefaultCanvasPixelWriter::new(4, 4);
+
+        let mut offset_pixel_writer = OffsetCanvasPixelWriter {
+            canvas_pixel_writer: &mut canvas_pixel_writer,
+            offset_x: 1,
+            offset_y: 2,
+        };
+
+        let mut rows = offset_pixel_writer.rows_mut();
+
+        assert_eq!(rows.len(), 2);
+
+        rows[0].write_pixel(0, 0, Pixel::rgb(1, 2, 3));
+        rows[1].write_pixel(2, 1, Pixel::rgb(4, 5, 6));
+
+        assert_eq!(
+            canvas_pixel_writer.canvas.get_pixel(1, 2),
+            Pixel::rgb(1, 2, 3)
+        );
+        assert_eq!(
+            canvas_pixel_writer.canvas.get_pixel(3, 3),
+            Pixel::rgb(4, 5, 6)
+        );
     }
 }

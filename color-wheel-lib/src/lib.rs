@@ -11,6 +11,7 @@ pub mod offset_row_pixel_writer;
 pub mod pixel;
 pub mod pixel_generators;
 pub mod render_color_wheel;
+pub mod render_color_wheel_rows;
 pub mod render_color_wheel_set;
 pub mod render_pixel;
 pub mod row_pixel_writer;

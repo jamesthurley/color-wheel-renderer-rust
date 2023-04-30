@@ -1,10 +1,9 @@
 use std::cmp::min;
 
 use crate::{
-    canvas_pixel_writer::CanvasPixelWriter,
-    color_wheel_definition::ColorWheelDefinition,
-    pixel_generators::PixelGenerator,
-    render_pixel::{RenderPixel, RenderPixelData},
+    canvas_pixel_writer::CanvasPixelWriter, color_wheel_definition::ColorWheelDefinition,
+    pixel_generators::PixelGenerator, render_color_wheel_rows::RenderColorWheelRows,
+    render_pixel::RenderPixelData,
 };
 
 // We're putting the `PixelWriter` as a generic parameter on the `RenderColorWheel` trait
@@ -20,16 +19,17 @@ where
     );
 }
 
-pub struct DefaultRenderColorWheel<TRenderPixel>
+pub struct DefaultRenderColorWheel<TRenderColorWheelRows: RenderColorWheelRows>
 where
-    TRenderPixel: RenderPixel,
+    TRenderColorWheelRows: RenderColorWheelRows,
 {
-    pub render_pixel: TRenderPixel,
+    pub render_color_wheel_rows: TRenderColorWheelRows,
 }
 
-impl<TRenderPixel: RenderPixel, TCanvasPixelWriter> RenderColorWheel<TCanvasPixelWriter>
-    for DefaultRenderColorWheel<TRenderPixel>
+impl<TRenderColorWheelRows, TCanvasPixelWriter> RenderColorWheel<TCanvasPixelWriter>
+    for DefaultRenderColorWheel<TRenderColorWheelRows>
 where
+    TRenderColorWheelRows: RenderColorWheelRows,
     TCanvasPixelWriter: CanvasPixelWriter,
 {
     fn execute<TPixelGenerator: PixelGenerator>(
@@ -63,22 +63,13 @@ where
             generator_size,
         };
 
-        let rows = canvas_pixel_writer.rows_mut();
-
-        if rows.len() < image_height as usize {
-            panic!(
-                "Expected color wheel image height was {} but only {} canvas rows were returned.",
-                image_height,
-                rows.len()
-            );
-        }
-
-        for (mut row, image_y) in rows.into_iter().zip(0..image_height) {
-            for image_x in 0..image_width {
-                self.render_pixel
-                    .execute(image_x, image_y, &data, definition, &mut row);
-            }
-        }
+        self.render_color_wheel_rows.execute(
+            image_width,
+            image_height,
+            &data,
+            definition,
+            canvas_pixel_writer,
+        );
     }
 }
 
@@ -88,15 +79,15 @@ mod tests {
 
     use float_cmp::assert_approx_eq;
 
-    use crate::{pixel_generators::MockPixelGenerator, row_pixel_writer::RowPixelWriter};
+    use crate::{pixel_generators::MockPixelGenerator, row_pixel_writer::MockRowPixelWriter};
 
     use super::*;
 
     #[test]
     fn when_no_pixel_generators_it_should_return() {
-        let mut pixel_writer = MockCanvasPixelWriter::new();
+        let mut canvas_pixel_writer = MockCanvasPixelWriter {};
 
-        let render_pixel = Rc::new(MockRenderPixel {
+        let render_color_wheel_rows = Rc::new(MockRenderColorWheelRows {
             calls: RefCell::new(vec![]),
         });
 
@@ -109,20 +100,20 @@ mod tests {
         };
 
         let renderer = DefaultRenderColorWheel {
-            render_pixel: render_pixel.clone(),
+            render_color_wheel_rows: render_color_wheel_rows.clone(),
         };
 
-        renderer.execute(&definition, &mut pixel_writer);
+        renderer.execute(&definition, &mut canvas_pixel_writer);
 
-        let calls = render_pixel.calls.borrow();
+        let calls = render_color_wheel_rows.calls.borrow();
         assert_eq!(calls.len(), 0);
     }
 
     #[test]
     fn it_should_render_each_pixel() {
-        let mut pixel_writer = MockCanvasPixelWriter::new();
+        let mut canvas_pixel_writer = MockCanvasPixelWriter {};
 
-        let render_pixel = Rc::new(MockRenderPixel {
+        let render_color_wheel_rows = Rc::new(MockRenderColorWheelRows {
             calls: RefCell::new(vec![]),
         });
 
@@ -135,44 +126,58 @@ mod tests {
         };
 
         let renderer = DefaultRenderColorWheel {
-            render_pixel: render_pixel.clone(),
+            render_color_wheel_rows: render_color_wheel_rows.clone(),
         };
 
-        renderer.execute(&definition, &mut pixel_writer);
+        renderer.execute(&definition, &mut canvas_pixel_writer);
 
-        let calls = render_pixel.calls.borrow();
-        assert_eq!(calls.len(), 225);
+        let calls = render_color_wheel_rows.calls.borrow();
+        assert_eq!(calls.len(), 1);
 
-        let call = &calls[17];
+        let call = &calls[0];
 
-        assert_eq!(call.image_x, 2);
-        assert_eq!(call.image_y, 1);
+        assert_eq!(call.image_width, 15);
+        assert_eq!(call.image_height, 15);
         assert_eq!(call.data.center_x, 7);
         assert_eq!(call.data.center_y, 7);
         assert_approx_eq!(f64, call.data.all_generators_size, 5.5);
         assert_approx_eq!(f64, call.data.generator_size, 2.75);
     }
 
-    struct MockRenderPixelCall {
-        image_x: u32,
-        image_y: u32,
+    struct MockCanvasPixelWriter {}
+
+    impl CanvasPixelWriter for MockCanvasPixelWriter {
+        type RowPixelWriter<'canvas> = MockRowPixelWriter;
+
+        fn rows_mut(&mut self) -> Vec<Self::RowPixelWriter<'_>> {
+            unreachable!()
+        }
+    }
+
+    struct MockRenderColorWheelRowsCall {
+        image_width: u32,
+        image_height: u32,
         data: RenderPixelData,
     }
-    struct MockRenderPixel {
-        calls: RefCell<Vec<MockRenderPixelCall>>,
+
+    struct MockRenderColorWheelRows {
+        calls: RefCell<Vec<MockRenderColorWheelRowsCall>>,
     }
-    impl RenderPixel for Rc<MockRenderPixel> {
-        fn execute<TPixelGenerator: PixelGenerator, TRowPixelWriter: RowPixelWriter>(
+
+    impl RenderColorWheelRows for Rc<MockRenderColorWheelRows> {
+        fn execute<TPixelGenerator: PixelGenerator, TCanvasPixelWriter>(
             &self,
-            image_x: u32,
-            image_y: u32,
+            image_width: u32,
+            image_height: u32,
             data: &RenderPixelData,
             _definition: &ColorWheelDefinition<TPixelGenerator>,
-            _pixel_writer: &mut TRowPixelWriter,
-        ) {
-            self.calls.borrow_mut().push(MockRenderPixelCall {
-                image_x,
-                image_y,
+            _canvas_pixel_writer: &mut TCanvasPixelWriter,
+        ) where
+            TCanvasPixelWriter: CanvasPixelWriter,
+        {
+            self.calls.borrow_mut().push(MockRenderColorWheelRowsCall {
+                image_width,
+                image_height,
                 data: *data,
             });
         }

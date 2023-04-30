@@ -81,7 +81,7 @@ mod tests {
 
     use crate::{
         pixel_generators::{MockPixelGenerator, PixelGenerator},
-        row_pixel_writer::RowPixelWriter,
+        row_pixel_writer::MockRowPixelWriter,
     };
 
     use super::*;
@@ -134,6 +134,16 @@ mod tests {
         );
     }
 
+    struct MockCanvasPixelWriter {}
+
+    impl CanvasPixelWriter for MockCanvasPixelWriter {
+        type RowPixelWriter<'canvas> = MockRowPixelWriter;
+
+        fn rows_mut(&mut self) -> Vec<Self::RowPixelWriter<'_>> {
+            unreachable!();
+        }
+    }
+
     #[derive(Default)]
     struct MockPixelWriterFactory {
         pub calls: RefCell<Vec<(u32, u32)>>,
@@ -143,7 +153,7 @@ mod tests {
 
         fn create(&self, width: u32, height: u32) -> Self::Result {
             self.calls.borrow_mut().push((width, height));
-            MockCanvasPixelWriter::new()
+            MockCanvasPixelWriter {}
         }
     }
 
@@ -158,7 +168,7 @@ mod tests {
     struct MockRenderColorWheel {
         pub calls: RefCell<Vec<RenderColorWheelCall>>,
     }
-    impl<'canvas, TPixelWriter: CanvasPixelWriter<'canvas>>
+    impl<'canvas, TPixelWriter: CanvasPixelWriter>
         RenderColorWheel<OffsetCanvasPixelWriter<'canvas, TPixelWriter>>
         for Rc<MockRenderColorWheel>
     {

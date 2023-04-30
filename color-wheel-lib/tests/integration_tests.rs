@@ -11,6 +11,7 @@ use color_wheel_lib::{
         HsvFixedSaturationPixelGenerator, PixelGeneratorConfiguration,
     },
     render_color_wheel::DefaultRenderColorWheel,
+    render_color_wheel_rows::DefaultRenderColorWheelRows,
     render_color_wheel_set::DefaultRenderColorWheelSet,
     render_color_wheel_set::RenderColorWheelSet,
     render_pixel::DefaultRenderPixel,
@@ -19,10 +20,12 @@ use color_wheel_lib::{
 fn setup() -> impl RenderColorWheelSet<Result = DefaultCanvasPixelWriter> {
     DefaultRenderColorWheelSet {
         render_color_wheel: DefaultRenderColorWheel {
-            render_pixel: DefaultRenderPixel {
-                get_pixel_generator_and_variable_dimension:
-                    DefaultGetPixelGeneratorAndVariableDimension {},
-                get_pixel: DefaultGetPixel {},
+            render_color_wheel_rows: DefaultRenderColorWheelRows {
+                render_pixel: DefaultRenderPixel {
+                    get_pixel_generator_and_variable_dimension:
+                        DefaultGetPixelGeneratorAndVariableDimension {},
+                    get_pixel: DefaultGetPixel {},
+                },
             },
         },
         pixel_writer_factory: DefaultCanvasPixelWriterFactory {},
