@@ -5,7 +5,7 @@ use crate::{
 };
 
 pub trait CanvasPixelWriter {
-    type RowPixelWriter<'canvas>: RowPixelWriter
+    type RowPixelWriter<'canvas>: RowPixelWriter + Send
     where
         Self: 'canvas;
 

@@ -1,6 +1,6 @@
 use crate::{bucket::bucket, pixel::Pixel, pixel_generators::PixelGenerator};
 
-pub trait GetPixel {
+pub trait GetPixel: Sync {
     fn execute<TPixelGenerator: PixelGenerator>(
         &self,
         pixel_generator: &TPixelGenerator,

@@ -5,7 +5,7 @@ pub struct PixelGeneratorAndVariableDimension<'a, TPixelGenerator: PixelGenerato
     pub variable_dimension: f64,
 }
 
-pub trait GetPixelGeneratorAndVariableDimension {
+pub trait GetPixelGeneratorAndVariableDimension: Sync {
     fn execute<'a, TPixelGenerator: PixelGenerator>(
         &self,
         generator_size: f64,

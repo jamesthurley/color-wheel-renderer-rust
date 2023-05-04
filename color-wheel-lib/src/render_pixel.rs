@@ -13,7 +13,7 @@ pub struct RenderPixelData {
     pub generator_size: f64,
 }
 
-pub trait RenderPixel {
+pub trait RenderPixel: Sync {
     fn execute<TPixelGenerator: PixelGenerator, TRowPixelWriter>(
         &self,
         image_x: u32,
@@ -88,7 +88,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::{cell::RefCell, rc::Rc};
+    use std::sync::{Arc, Mutex};
 
     use float_cmp::assert_approx_eq;
     use mockall::predicate::*;
@@ -103,10 +103,10 @@ mod tests {
     struct SetupData {
         pub pixel_writer: MockRowPixelWriter,
         pub get_pixel_generator_and_variable_dimension:
-            Rc<MockGetPixelGeneratorAndVariableDimension>,
-        pub get_pixel: Rc<MockGetPixel>,
+            Arc<MockGetPixelGeneratorAndVariableDimension>,
+        pub get_pixel: Arc<MockGetPixel>,
         pub target:
-            DefaultRenderPixel<Rc<MockGetPixelGeneratorAndVariableDimension>, Rc<MockGetPixel>>,
+            DefaultRenderPixel<Arc<MockGetPixelGeneratorAndVariableDimension>, Arc<MockGetPixel>>,
         pub render_pixel_data: RenderPixelData,
         pub color_wheel_definition: ColorWheelDefinition<MockPixelGenerator>,
     }
@@ -115,23 +115,25 @@ mod tests {
         let pixel_writer = MockRowPixelWriter::new();
 
         let get_pixel_generator_and_variable_dimension =
-            Rc::new(MockGetPixelGeneratorAndVariableDimension {
+            Arc::new(MockGetPixelGeneratorAndVariableDimension {
                 result_index: generator_index,
                 variable_dimension,
-                calls: RefCell::new(vec![]),
+                calls: Mutex::new(vec![]),
             });
 
-        let get_pixel = Rc::new(MockGetPixel {
+        let get_pixel = Arc::new(MockGetPixel {
             result: pixel,
-            calls: RefCell::new(vec![]),
+            calls: Mutex::new(vec![]),
         });
 
-        let target =
-            DefaultRenderPixel::<Rc<MockGetPixelGeneratorAndVariableDimension>, Rc<MockGetPixel>> {
-                get_pixel_generator_and_variable_dimension:
-                    get_pixel_generator_and_variable_dimension.clone(),
-                get_pixel: get_pixel.clone(),
-            };
+        let target = DefaultRenderPixel::<
+            Arc<MockGetPixelGeneratorAndVariableDimension>,
+            Arc<MockGetPixel>,
+        > {
+            get_pixel_generator_and_variable_dimension: get_pixel_generator_and_variable_dimension
+                .clone(),
+            get_pixel: get_pixel.clone(),
+        };
 
         let render_pixel_data = RenderPixelData {
             center_x: 55,
@@ -173,12 +175,13 @@ mod tests {
         assert_eq!(
             test.get_pixel_generator_and_variable_dimension
                 .calls
-                .borrow()
+                .lock()
+                .unwrap()
                 .len(),
             0
         );
 
-        assert_eq!(test.get_pixel.calls.borrow().len(), 0);
+        assert_eq!(test.get_pixel.calls.lock().unwrap().len(), 0);
     }
 
     #[test]
@@ -196,7 +199,8 @@ mod tests {
         assert_eq!(
             test.get_pixel_generator_and_variable_dimension
                 .calls
-                .borrow()
+                .lock()
+                .unwrap()
                 .len(),
             1
         );
@@ -204,12 +208,13 @@ mod tests {
         let call = &test
             .get_pixel_generator_and_variable_dimension
             .calls
-            .borrow()[0];
+            .lock()
+            .unwrap()[0];
 
         assert_eq!(call.generator_size, test.render_pixel_data.generator_size);
         assert_approx_eq!(f64, call.distance_from_center, std::f64::consts::SQRT_2);
 
-        assert_eq!(test.get_pixel.calls.borrow().len(), 0);
+        assert_eq!(test.get_pixel.calls.lock().unwrap().len(), 0);
     }
 
     #[test]
@@ -231,9 +236,9 @@ mod tests {
             &mut test.pixel_writer,
         );
 
-        assert_eq!(test.get_pixel.calls.borrow().len(), 1);
+        assert_eq!(test.get_pixel.calls.lock().unwrap().len(), 1);
 
-        let call = &test.get_pixel.calls.borrow()[0];
+        let call = &test.get_pixel.calls.lock().unwrap()[0];
         assert_approx_eq!(f64, call.angle_degrees, 45.);
         assert_approx_eq!(f64, call.variable_dimension, 123.);
         assert_eq!(
@@ -254,10 +259,10 @@ mod tests {
     struct MockGetPixelGeneratorAndVariableDimension {
         result_index: isize,
         variable_dimension: f64,
-        calls: RefCell<Vec<MockGetPixelGeneratorAndVariableDimensionCall>>,
+        calls: Mutex<Vec<MockGetPixelGeneratorAndVariableDimensionCall>>,
     }
 
-    impl GetPixelGeneratorAndVariableDimension for Rc<MockGetPixelGeneratorAndVariableDimension> {
+    impl GetPixelGeneratorAndVariableDimension for Arc<MockGetPixelGeneratorAndVariableDimension> {
         fn execute<'a, TPixelGenerator: PixelGenerator>(
             &self,
             generator_size: f64,
@@ -265,7 +270,8 @@ mod tests {
             distance_from_center: f64,
         ) -> Option<PixelGeneratorAndVariableDimension<'a, TPixelGenerator>> {
             self.calls
-                .borrow_mut()
+                .lock()
+                .unwrap()
                 .push(MockGetPixelGeneratorAndVariableDimensionCall {
                     generator_size,
                     distance_from_center,
@@ -290,9 +296,9 @@ mod tests {
     }
     struct MockGetPixel {
         result: Pixel,
-        calls: RefCell<Vec<MockGetPixelCall>>,
+        calls: Mutex<Vec<MockGetPixelCall>>,
     }
-    impl GetPixel for Rc<MockGetPixel> {
+    impl GetPixel for Arc<MockGetPixel> {
         fn execute<TPixelGenerator: PixelGenerator>(
             &self,
             _pixel_generator: &TPixelGenerator,
@@ -301,7 +307,7 @@ mod tests {
             angle_buckets: u32,
             distance_buckets: u32,
         ) -> Pixel {
-            self.calls.borrow_mut().push(MockGetPixelCall {
+            self.calls.lock().unwrap().push(MockGetPixelCall {
                 angle_degrees,
                 variable_dimension,
                 angle_buckets,
