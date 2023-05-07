@@ -8,7 +8,7 @@ use crate::cli::Cli;
 pub fn write_output_file(cli: Cli, pixel_writer: DefaultCanvasPixelWriter) {
     let output_file_path = cli
         .output
-        .unwrap_or(PathBuf::from(format!("output{OUTPUT_FILE_EXTENSION}")));
+        .unwrap_or(PathBuf::from(format!("output.{OUTPUT_FILE_EXTENSION}")));
 
     let canvas_width = pixel_writer.canvas.width();
     let canvas_height = pixel_writer.canvas.height();

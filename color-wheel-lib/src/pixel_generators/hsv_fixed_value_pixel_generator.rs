@@ -16,6 +16,6 @@ impl PixelGenerator for HsvFixedValuePixelGenerator {
     }
 
     fn get_pixel(&self, angle_degrees: f64, varying_dimension_value: f64) -> Pixel {
-        hsv_to_pixel(angle_degrees, self.value, varying_dimension_value)
+        hsv_to_pixel(angle_degrees, varying_dimension_value, self.value)
     }
 }

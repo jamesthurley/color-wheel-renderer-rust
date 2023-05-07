@@ -60,7 +60,7 @@ where
     let color_wheel_definitions = if cli.expand {
         vec![ColorWheelDefinition {
             image_size,
-            margin_size: cli.margin,
+            margin_size: cli.supersampling * cli.margin,
             angle_buckets: cli.angular_buckets,
             distance_buckets: cli.radial_buckets,
             pixel_generators: cli
@@ -74,7 +74,7 @@ where
             .iter()
             .map(|v| ColorWheelDefinition {
                 image_size,
-                margin_size: cli.margin,
+                margin_size: cli.supersampling * cli.margin,
                 angle_buckets: cli.angular_buckets,
                 distance_buckets: cli.radial_buckets,
                 pixel_generators: vec![create_pixel_generator.execute(*v, configuration)],

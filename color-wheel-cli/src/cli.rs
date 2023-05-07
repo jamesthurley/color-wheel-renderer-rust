@@ -1,5 +1,5 @@
 use clap::{command, CommandFactory, Parser, ValueEnum};
-use std::path::PathBuf;
+use std::{ffi::OsStr, path::PathBuf};
 
 use crate::OUTPUT_FILE_EXTENSION;
 
@@ -25,11 +25,11 @@ pub struct Cli {
     pub output: Option<PathBuf>,
 
     /// Diameter of the color wheel in pixels.
-    #[arg(short, long, value_name = "PIXELS", default_value_t = 800, value_parser = clap::value_parser!(u32).range(5..))]
+    #[arg(short, long, value_name = "PIXELS", default_value_t = 980, value_parser = clap::value_parser!(u32).range(5..))]
     pub diameter: u32,
 
     /// Size of margin around color wheel in pixels.
-    #[arg(short, long, value_name = "PIXELS", default_value_t = 0)]
+    #[arg(short, long, value_name = "PIXELS", default_value_t = 10)]
     pub margin: u32,
 
     /// Add additional wheels to outside of previous wheel.
@@ -67,7 +67,7 @@ pub fn process_cli_options(cli: Cli) -> Cli {
     }
 
     if let Some(output_value) = cli.output.clone() {
-        if !output_value.ends_with(OUTPUT_FILE_EXTENSION) {
+        if output_value.extension() != Some(OsStr::new(OUTPUT_FILE_EXTENSION)) {
             let mut cmd = Cli::command();
             cmd.error(
                 clap::error::ErrorKind::InvalidValue,

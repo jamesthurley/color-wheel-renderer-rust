@@ -12,7 +12,7 @@ mod create_pixel_generator_configuration;
 mod generate_color_wheel;
 mod write_output_file;
 
-const OUTPUT_FILE_EXTENSION: &str = ".png";
+const OUTPUT_FILE_EXTENSION: &str = "png";
 
 fn main() {
     let cli = process_cli_options(Cli::parse());
