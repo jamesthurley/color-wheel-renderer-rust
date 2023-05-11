@@ -28,9 +28,9 @@ pub fn write_output_file(cli: Cli, pixel_writer: DefaultCanvasPixelWriter) {
         let output_width = canvas_width / cli.supersampling;
         let output_height = canvas_height / cli.supersampling;
 
-        let mut src_image = fr::Image::from_vec_u8(
-            NonZeroU32::new(canvas_width).unwrap(),
-            NonZeroU32::new(canvas_height).unwrap(),
+        let src_image = fr::Image::from_vec_u8(
+            NonZeroU32::new(canvas_width).expect("Failed to create NonZeroU32 for canvas_width."),
+            NonZeroU32::new(canvas_height).expect("Failed to create NonZeroU32 for canvas_height."),
             rgba,
             fr::PixelType::U8x4,
         )
@@ -43,13 +43,17 @@ pub fn write_output_file(cli: Cli, pixel_writer: DefaultCanvasPixelWriter) {
         // Multiple RGB channels of source image by alpha channel
         // (not required for the Nearest algorithm)
         let alpha_mul_div = fr::MulDiv::default();
-        alpha_mul_div
-            .multiply_alpha_inplace(&mut src_image.view_mut())
-            .unwrap();
+
+        // The image we generate is already pre-multiplied, so we can skip this step.
+        // alpha_mul_div
+        //     .multiply_alpha_inplace(&mut src_image.view_mut())
+        //     .expect("Failed to multiply alpha in fast_image_resize.");
 
         // Create container for data of destination image
-        let dst_width = NonZeroU32::new(output_width).unwrap();
-        let dst_height = NonZeroU32::new(output_height).unwrap();
+        let dst_width =
+            NonZeroU32::new(output_width).expect("Failed to create NonZeroU32 for output_width.");
+        let dst_height =
+            NonZeroU32::new(output_height).expect("Failed to create NonZeroU32 for output_height.");
         let mut dst_image = fr::Image::new(dst_width, dst_height, src_image.pixel_type());
 
         // Get mutable view of destination image data
@@ -58,10 +62,14 @@ pub fn write_output_file(cli: Cli, pixel_writer: DefaultCanvasPixelWriter) {
         // Create Resizer instance and resize source image
         // into buffer of destination image
         let mut resizer = fr::Resizer::new(fr::ResizeAlg::Convolution(fr::FilterType::Hamming));
-        resizer.resize(&src_image.view(), &mut dst_view).unwrap();
+        resizer
+            .resize(&src_image.view(), &mut dst_view)
+            .expect("Failed to perform resize in fast_image_resize.");
 
         // Divide RGB channels of destination image by alpha
-        alpha_mul_div.divide_alpha_inplace(&mut dst_view).unwrap();
+        alpha_mul_div
+            .divide_alpha_inplace(&mut dst_view)
+            .expect("Failed to divide alpha in fast_image_resize.");
 
         image::save_buffer(
             output_file_path,
