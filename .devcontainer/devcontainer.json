@@ -27,7 +27,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ngtystr.ppm-pgm-viewer-for-vscode"
+				"ngtystr.ppm-pgm-viewer-for-vscode",
+				"github.vscode-github-actions"
 			]
 		}
 	}
