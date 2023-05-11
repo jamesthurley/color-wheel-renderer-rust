@@ -55,6 +55,8 @@ pub enum ColorWheelType {
     HslFixedLightness,
     HsvFixedSaturation,
     HsvFixedValue,
+    OklabFixedLightness,
+    OklabFixedChroma,
 }
 
 pub fn process_cli_options(cli: Cli) -> Cli {

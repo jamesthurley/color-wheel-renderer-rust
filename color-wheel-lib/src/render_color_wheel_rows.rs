@@ -94,13 +94,17 @@ mod tests {
         assert_eq!(calls.len(), 4);
 
         assert!(calls.iter().all(|c| c.data == data));
-        assert_eq!(
-            calls
-                .iter()
-                .map(|c| (c.image_x, c.image_y))
-                .collect::<Vec<_>>(),
-            vec![(0, 0), (1, 0), (0, 1), (1, 1),]
-        );
+
+        let mut sorted_calls = calls
+            .iter()
+            .map(|c| (c.image_x, c.image_y))
+            .collect::<Vec<_>>();
+        sorted_calls.sort();
+
+        let mut expected_calls = vec![(0, 0), (1, 0), (0, 1), (1, 1)];
+        expected_calls.sort();
+
+        assert_eq!(sorted_calls, expected_calls,);
 
         assert_eq!(rows.len(), 2);
         assert_eq!(rows[0].lock().unwrap().calls, vec![(0, 0), (1, 0)]);

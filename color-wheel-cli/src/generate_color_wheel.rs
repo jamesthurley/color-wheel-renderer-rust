@@ -6,7 +6,8 @@ use color_wheel_lib::{
     get_pixel_generator_and_variable_dimension::DefaultGetPixelGeneratorAndVariableDimension,
     pixel_generators::{
         HslFixedLightnessPixelGenerator, HslFixedSaturationPixelGenerator,
-        HsvFixedSaturationPixelGenerator, HsvFixedValuePixelGenerator, PixelGenerator,
+        HsvFixedSaturationPixelGenerator, HsvFixedValuePixelGenerator,
+        OklabFixedChromaPixelGenerator, OklabFixedLightnessPixelGenerator, PixelGenerator,
     },
     render_color_wheel::DefaultRenderColorWheel,
     render_color_wheel_rows::DefaultRenderColorWheelRows,
@@ -40,6 +41,16 @@ pub fn generate_color_wheel(cli: &Cli) -> DefaultCanvasPixelWriter {
 
         ColorWheelType::HsvFixedValue => generate_specific_color_wheel::<
             HsvFixedValuePixelGenerator,
+            DefaultCreatePixelGenerator,
+        >(cli, create_pixel_generator),
+
+        ColorWheelType::OklabFixedLightness => generate_specific_color_wheel::<
+            OklabFixedLightnessPixelGenerator,
+            DefaultCreatePixelGenerator,
+        >(cli, create_pixel_generator),
+
+        ColorWheelType::OklabFixedChroma => generate_specific_color_wheel::<
+            OklabFixedChromaPixelGenerator,
             DefaultCreatePixelGenerator,
         >(cli, create_pixel_generator),
     }

@@ -1,7 +1,7 @@
 use color_wheel_lib::pixel_generators::{
     HslFixedLightnessPixelGenerator, HslFixedSaturationPixelGenerator,
-    HsvFixedSaturationPixelGenerator, HsvFixedValuePixelGenerator, PixelGenerator,
-    PixelGeneratorConfiguration,
+    HsvFixedSaturationPixelGenerator, HsvFixedValuePixelGenerator, OklabFixedChromaPixelGenerator,
+    OklabFixedLightnessPixelGenerator, PixelGenerator, PixelGeneratorConfiguration,
 };
 
 pub trait CreatePixelGenerator<T: PixelGenerator> {
@@ -57,6 +57,32 @@ impl CreatePixelGenerator<HsvFixedValuePixelGenerator> for DefaultCreatePixelGen
     ) -> HsvFixedValuePixelGenerator {
         HsvFixedValuePixelGenerator {
             value: fixed,
+            configuration,
+        }
+    }
+}
+
+impl CreatePixelGenerator<OklabFixedLightnessPixelGenerator> for DefaultCreatePixelGenerator {
+    fn execute(
+        &self,
+        fixed: f64,
+        configuration: PixelGeneratorConfiguration,
+    ) -> OklabFixedLightnessPixelGenerator {
+        OklabFixedLightnessPixelGenerator {
+            lightness: fixed,
+            configuration,
+        }
+    }
+}
+
+impl CreatePixelGenerator<OklabFixedChromaPixelGenerator> for DefaultCreatePixelGenerator {
+    fn execute(
+        &self,
+        fixed: f64,
+        configuration: PixelGeneratorConfiguration,
+    ) -> OklabFixedChromaPixelGenerator {
+        OklabFixedChromaPixelGenerator {
+            chroma: fixed,
             configuration,
         }
     }
