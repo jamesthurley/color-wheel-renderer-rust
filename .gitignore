@@ -12,3 +12,5 @@ Cargo.lock
 output.ppm
 output.png
 scratch.rs
+scratch.sh
+/samples-new

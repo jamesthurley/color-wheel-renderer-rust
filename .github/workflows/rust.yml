@@ -40,12 +40,19 @@ jobs:
 
     - name: Compare samples
       run: |
-        for file1 in samples/*.bin; do
-          file2="samples-new/$(basename "$file1")"
-          if cmp --silent "$file1" "$file2"; then
-            echo "$file1 and $file2 are identical"
-          else
-            echo "$file1 and $file2 are different"
-            exit 1
+        for file1 in samples/*.png; do
+          if [ -f "$file1" ]; then
+            file2="samples-new/$(basename "$file1")"
+            if [ -f "$file2" ]; then
+              if cmp --silent "$file1" "$file2"; then
+                echo "$file1 and $file2 are identical"
+              else
+                echo "$file1 and $file2 are different"
+                exit 1
+              fi
+            else
+              echo "$file2 not found"
+              exit 1
+            fi
           fi
         done
