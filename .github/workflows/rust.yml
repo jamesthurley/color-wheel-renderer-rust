@@ -16,7 +16,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --verbose --release
+
     - name: Run tests
       run: cargo test --verbose
+
+    - name: Generate samples
+      run: |
+        mkdir samples-new
+        ./target/release/color-wheel-cli hsv-fixed-value -f 1 -f 0.6 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o ./samples-new/color-wheel-hsv-fixed-value-three.png
+        ./target/release/color-wheel-cli hsl-fixed-lightness -f 0.8 -f 0.5 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-lightness-three.png
+        ./target/release/color-wheel-cli hsv-fixed-saturation -f 1 -f 0.6 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o ./samples-new/color-wheel-hsv-fixed-saturation-three.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -f 1 -f 0.6 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-three.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-smooth.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -c -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-smooth-reversed-colors.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -a 36 -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-angular.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -r 12 -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-radial.png
+        ./target/release/color-wheel-cli hsv-fixed-saturation -f 0.25 -f 0.5 -f 1 -a 18 -r 12 -e -d 720 -m 40 -o ./samples-new/color-wheel-hsv-fixed-saturation-expand.png
+        ./target/release/color-wheel-cli hsl-fixed-saturation -f 0.1 -f 0.5 -f 1 -a 18 -r 12 -e -b -d 720 -m 40 -o ./samples-new/color-wheel-hsl-fixed-saturation-expand.png
+        ./target/release/color-wheel-cli hsv-fixed-saturation -a 12 -r 5 -d 720 -m 40 -o ./samples-new/color-wheel-hsv-fixed-saturation-coarse.png
+
+    - name: Compare samples
+      run: |
+        for file1 in samples/*.bin; do
+          file2="samples-new/$(basename "$file1")"
+          if cmp --silent "$file1" "$file2"; then
+            echo "$file1 and $file2 are identical"
+          else
+            echo "$file1 and $file2 are different"
+            exit 1
+          fi
+        done
