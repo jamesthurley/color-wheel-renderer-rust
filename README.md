@@ -112,23 +112,23 @@ color-wheel-cli hsl-fixed-saturation -f 1 -f 0.6 -f 0.2 -a 18 -r 12
 ---
 
 ## OKLAB Fixed Chroma
-3 Chroma Values
+18 Angular Buckets, 12 Radial Buckets, 3 Chroma Values
 
 ![OKLAB Fixed Chroma Color Wheel](samples/color-wheel-oklab-fixed-chroma-three.png)
 
 ```
-color-wheel-cli oklab-fixed-lightness -f 0.085 -f 0.2 -f 0.35
+color-wheel-cli oklab-fixed-lightness -f 0.085 -f 0.2 -f 0.35 -a 18 -r 12
 ```
 
 ---
 
 ## OKLAB Fixed Lightness
-3 Lightness Values
+18 Angular Buckets, 12 Radial Buckets, 3 Lightness Values
 
 ![OKLAB Fixed Lightness Color Wheel](samples/color-wheel-oklab-fixed-lightness-three.png)
 
 ```
-color-wheel-cli oklab-fixed-lightness -f 0.1 -f 0.5 -f 1.0
+color-wheel-cli oklab-fixed-lightness -f 0.1 -f 0.5 -f 1.0 -a 18 -r 12
 ```
 
 ---
@@ -226,7 +226,7 @@ color-wheel-cli hsl-fixed-lightness -f 0.8 -f 0.5 -f 0.2 -a 18 -r 12 -d 720 -m 4
 color-wheel-cli hsv-fixed-saturation -f 1 -f 0.6 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o color-wheel-hsv-fixed-saturation-three.png
 color-wheel-cli hsl-fixed-saturation -f 1 -f 0.6 -f 0.2 -a 18 -r 12 -d 720 -m 40 -o color-wheel-hsl-fixed-saturation-three.png
 color-wheel-cli oklab-fixed-chroma -f 0.085 -f 0.2 -f 0.35 -a 18 -r 12 -d 720 -m 40 -o color-wheel-oklab-fixed-chroma-three.png
-color-wheel-cli oklab-fixed-lightness -f 0.1 -f 0.5 -f 1.0 -d 720 -m 40 -o color-wheel-oklab-fixed-lightness-three.png
+color-wheel-cli oklab-fixed-lightness -f 0.1 -f 0.5 -f 1.0 -a 18 -r 12 -d 720 -m 40 -o color-wheel-oklab-fixed-lightness-three.png
 color-wheel-cli hsl-fixed-saturation -d 720 -m 40 -o color-wheel-hsl-fixed-saturation-smooth.png
 color-wheel-cli hsl-fixed-saturation -c -d 720 -m 40 -o color-wheel-hsl-fixed-saturation-smooth-reversed-colors.png
 color-wheel-cli hsl-fixed-saturation -a 36 -d 720 -m 40 -o color-wheel-hsl-fixed-saturation-angular.png
